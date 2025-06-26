@@ -23,7 +23,6 @@ const TaskAnalytics: React.FC<TaskAnalyticsProps> = ({ tasks }) => {
   // Calculate statistics
   const totalTasks = tasks.length;
   const completedTasks = tasks.filter(task => task.is_completed).length;
-  const pendingTasks = totalTasks - completedTasks;
   const completionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
   
   // Priority distribution

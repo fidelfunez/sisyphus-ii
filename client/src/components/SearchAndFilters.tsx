@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Filter, Calendar, X, ChevronDown, ChevronUp } from 'lucide-react';
+import { Search, Filter, X, ChevronDown, ChevronUp } from 'lucide-react';
 
 interface SearchAndFiltersProps {
   searchTerm: string;

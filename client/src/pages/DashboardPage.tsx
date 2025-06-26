@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { Plus, LogOut, Settings, CheckCircle, Circle, Trash2, Edit3, TrendingUp, Calendar, Target, Zap, Tag, Filter, Search, BarChart3, Download, Users } from 'lucide-react';
+import { Plus, LogOut, Settings } from 'lucide-react';
 import axios from 'axios';
 import TaskForm from '../components/TaskForm';
 import TaskItem from '../components/TaskItem';

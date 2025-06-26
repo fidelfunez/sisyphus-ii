@@ -1,5 +1,5 @@
 import React from 'react';
-import { CheckCircle, Circle, Trash2, Edit3, Clock, Calendar, Zap, Tag, AlertTriangle } from 'lucide-react';
+import { CheckCircle, Circle, Trash2, Clock, Calendar, Tag, AlertTriangle } from 'lucide-react';
 
 interface Task {
   id: number;
