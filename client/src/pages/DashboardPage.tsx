@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { Plus, LogOut, Settings } from 'lucide-react';
+import { Plus, LogOut, Settings, Target, BarChart3, Download, Circle, CheckCircle, Zap, Calendar, Users, Tag } from 'lucide-react';
 import axios from 'axios';
 import TaskForm from '../components/TaskForm';
 import TaskItem from '../components/TaskItem';
@@ -32,7 +32,7 @@ type TabType = 'tasks' | 'analytics' | 'export';
 const DashboardPage: React.FC = () => {
   const { user, logout } = useAuth();
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [categories, setCategories] = useState<string[]>([]);
+  const [, setCategories] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showTaskForm, setShowTaskForm] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>('tasks');

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { Eye, EyeOff, ArrowRight, Sparkles, Zap, Target, CheckCircle, Clock, TrendingUp, Heart } from 'lucide-react';
+import { Eye, EyeOff, ArrowRight, Sparkles, Zap, Target, CheckCircle, TrendingUp } from 'lucide-react';
 
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState('');

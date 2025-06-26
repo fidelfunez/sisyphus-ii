@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Plus, AlertCircle, Calendar, Tag } from 'lucide-react';
+import { X, Plus, AlertCircle, Calendar, Tag, CheckCircle } from 'lucide-react';
 
 interface TaskFormProps {
   onSubmit: (taskData: { title: string; description?: string; priority: number; category?: string; due_date?: string }) => void;

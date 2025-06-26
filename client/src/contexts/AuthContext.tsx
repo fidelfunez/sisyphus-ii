@@ -110,7 +110,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setIsLoading(true);
       setError(null);
       
-      const response = await axios.post('/api/auth/register', {
+      await axios.post('/api/auth/register', {
         email,
         username,
         password,
