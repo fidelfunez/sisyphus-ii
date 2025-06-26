@@ -440,7 +440,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 👨🏻‍💻 About Me
 
-Hi, I'm **Fidel Fúnez**. I'm a backend developer and Bitcoin educator based in Tegucigalpa, Honduras 🇭🇳, and The Woodlands, Texas 🇺🇸, currently building my portfolio while helping others understand tech and financial freedom!
+Hi, I'm **Fidel Fúnez**. I'm an independent full-stack developer and Bitcoin educator based in Tegucigalpa, Honduras 🇭🇳, and The Woodlands, Texas 🇺🇸, currently building my portfolio while helping others understand tech and financial freedom!
 
 ### Connect With Me
 - **LinkedIn**: https://linkedin.com/in/fidel-funez
