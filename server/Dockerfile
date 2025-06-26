@@ -12,7 +12,6 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         gcc \
-        postgresql-client \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
