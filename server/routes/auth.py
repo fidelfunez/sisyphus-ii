@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
+from pydantic import BaseModel
 
 from utils.database import get_db
 from utils.auth import (
@@ -12,6 +13,10 @@ from utils.auth import (
 )
 from models.user import User
 from schemas import UserCreate, Token, LoginRequest, UserResponse, MessageResponse
+
+# Add schema for refresh token request
+class RefreshTokenRequest(BaseModel):
+    refresh_token: str
 
 router = APIRouter()
 
@@ -84,11 +89,11 @@ def login(login_data: LoginRequest, db: Session = Depends(get_db)):
     }
 
 @router.post("/refresh", response_model=Token)
-def refresh_token(refresh_token: str, db: Session = Depends(get_db)):
+def refresh_token(request: RefreshTokenRequest, db: Session = Depends(get_db)):
     """Refresh access token using refresh token"""
     from utils.auth import verify_token
     
-    payload = verify_token(refresh_token, "refresh")
+    payload = verify_token(request.refresh_token, "refresh")
     if payload is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

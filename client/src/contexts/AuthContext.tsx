@@ -19,15 +19,44 @@ axios.interceptors.request.use(
   }
 );
 
-// Add response interceptor for debugging
+// Add response interceptor for debugging and token refresh
 axios.interceptors.response.use(
   (response) => {
     console.log('Response received:', response.status, response.config.url);
     return response;
   },
-  (error) => {
+  async (error) => {
     console.error('Response error:', error.response?.status, error.config?.url);
     console.error('Error details:', error.response?.data);
+    
+    // Handle token expiration
+    if (error.response?.status === 401 && error.config?.url !== '/api/auth/refresh') {
+      const refreshToken = localStorage.getItem('refresh_token');
+      if (refreshToken) {
+        try {
+          console.log('Token expired, attempting refresh...');
+          const refreshResponse = await axios.post('/api/auth/refresh', {
+            refresh_token: refreshToken
+          });
+          
+          const { access_token, refresh_token } = refreshResponse.data;
+          localStorage.setItem('access_token', access_token);
+          localStorage.setItem('refresh_token', refresh_token);
+          axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
+          
+          // Retry the original request
+          error.config.headers['Authorization'] = `Bearer ${access_token}`;
+          return axios(error.config);
+        } catch (refreshError) {
+          console.error('Token refresh failed:', refreshError);
+          // Clear tokens and redirect to login
+          localStorage.removeItem('access_token');
+          localStorage.removeItem('refresh_token');
+          window.location.href = '/login';
+        }
+      }
+    }
+    
     return Promise.reject(error);
   }
 );
@@ -99,10 +128,39 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const checkAuth = async () => {
       if (token) {
         try {
+          console.log('Checking authentication with token...');
           const response = await axios.get('/api/auth/me');
+          console.log('Auth check successful:', response.data);
           setUser(response.data);
-        } catch (error) {
+        } catch (error: any) {
           console.error('Auth check failed:', error);
+          
+          // If token is expired, try to refresh it
+          if (error.response?.status === 401) {
+            const refreshToken = localStorage.getItem('refresh_token');
+            if (refreshToken) {
+              try {
+                console.log('Attempting to refresh token...');
+                const refreshResponse = await axios.post('/api/auth/refresh', {
+                  refresh_token: refreshToken
+                });
+                
+                const { access_token, refresh_token } = refreshResponse.data;
+                localStorage.setItem('access_token', access_token);
+                localStorage.setItem('refresh_token', refresh_token);
+                setToken(access_token);
+                
+                // Try to get user info again
+                const userResponse = await axios.get('/api/auth/me');
+                setUser(userResponse.data);
+                return;
+              } catch (refreshError) {
+                console.error('Token refresh failed:', refreshError);
+              }
+            }
+          }
+          
+          // If refresh failed or no refresh token, logout
           logout();
         }
       }
