@@ -40,9 +40,13 @@ axios.interceptors.response.use(
           console.log('Token expired, attempting refresh...');
           error.config._retry = true; // Prevent infinite loops
           
+          console.log('Refresh token from localStorage:', refreshToken ? `${refreshToken.substring(0, 20)}...` : 'null');
+          
           const refreshResponse = await axios.post('/api/auth/refresh', {
             refresh_token: refreshToken
           });
+          
+          console.log('Refresh response received:', refreshResponse.data);
           
           const { access_token, refresh_token } = refreshResponse.data;
           localStorage.setItem('access_token', access_token);
@@ -54,6 +58,8 @@ axios.interceptors.response.use(
           return axios(error.config);
         } catch (refreshError: any) {
           console.error('Token refresh failed:', refreshError);
+          console.error('Refresh error response:', refreshError.response?.data);
+          console.error('Refresh error status:', refreshError.response?.status);
           
           // If refresh token is expired or invalid, clear everything
           if (refreshError.response?.status === 401) {

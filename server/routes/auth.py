@@ -93,33 +93,67 @@ def refresh_token(request: RefreshTokenRequest, db: Session = Depends(get_db)):
     """Refresh access token using refresh token"""
     from utils.auth import verify_token
     
-    payload = verify_token(request.refresh_token, "refresh")
-    if payload is None:
+    # Add debugging
+    print(f"Refresh token request received: {request.refresh_token[:20]}...")
+    
+    try:
+        payload = verify_token(request.refresh_token, "refresh")
+        if payload is None:
+            print("Token verification failed - payload is None")
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid refresh token",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+        
+        username: str = payload.get("sub")
+        if not username:
+            print("No username in payload")
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid refresh token - no username",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+        
+        user = db.query(User).filter(User.username == username).first()
+        
+        if not user:
+            print(f"User not found: {username}")
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid refresh token - user not found",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+        
+        if not user.is_active:
+            print(f"User inactive: {username}")
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid refresh token - user inactive",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+        
+        # Create new tokens
+        access_token = create_access_token(data={"sub": user.username})
+        new_refresh_token = create_refresh_token(data={"sub": user.username})
+        
+        print(f"Token refresh successful for user: {username}")
+        
+        return {
+            "access_token": access_token,
+            "token_type": "bearer",
+            "refresh_token": new_refresh_token
+        }
+        
+    except HTTPException:
+        # Re-raise HTTP exceptions
+        raise
+    except Exception as e:
+        print(f"Unexpected error in refresh token: {str(e)}")
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid refresh token",
-            headers={"WWW-Authenticate": "Bearer"},
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Internal server error during token refresh"
         )
-    
-    username: str = payload.get("sub")
-    user = db.query(User).filter(User.username == username).first()
-    
-    if not user or not user.is_active:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid refresh token",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    
-    # Create new tokens
-    access_token = create_access_token(data={"sub": user.username})
-    new_refresh_token = create_refresh_token(data={"sub": user.username})
-    
-    return {
-        "access_token": access_token,
-        "token_type": "bearer",
-        "refresh_token": new_refresh_token
-    }
 
 @router.get("/me", response_model=UserResponse)
 def get_current_user_info(current_user: User = Depends(get_current_user)):
