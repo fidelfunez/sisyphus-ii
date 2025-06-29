@@ -52,21 +52,41 @@ axios.interceptors.response.use(
           // Retry the original request
           error.config.headers['Authorization'] = `Bearer ${access_token}`;
           return axios(error.config);
-        } catch (refreshError) {
+        } catch (refreshError: any) {
           console.error('Token refresh failed:', refreshError);
-          // Clear tokens and redirect to login
-          localStorage.removeItem('access_token');
-          localStorage.removeItem('refresh_token');
-          delete axios.defaults.headers.common['Authorization'];
           
-          // Only redirect if we're not already on the login page
-          if (!window.location.pathname.includes('/login')) {
-            window.location.href = '/login';
+          // If refresh token is expired or invalid, clear everything
+          if (refreshError.response?.status === 401) {
+            console.log('Refresh token expired, clearing session and redirecting to login...');
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token');
+            delete axios.defaults.headers.common['Authorization'];
+            
+            // Only redirect if we're not already on the login page
+            if (!window.location.pathname.includes('/login')) {
+              window.location.href = '/login';
+            }
+          } else {
+            // For other refresh errors, just clear tokens
+            console.log('Other refresh error, clearing tokens...');
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token');
+            delete axios.defaults.headers.common['Authorization'];
           }
         }
       } else if (error.config._retry) {
         // If we already tried to refresh and failed, clear tokens
         console.log('Token refresh already attempted, clearing tokens...');
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+        delete axios.defaults.headers.common['Authorization'];
+        
+        if (!window.location.pathname.includes('/login')) {
+          window.location.href = '/login';
+        }
+      } else if (!refreshToken) {
+        // No refresh token available
+        console.log('No refresh token available, clearing session...');
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
         delete axios.defaults.headers.common['Authorization'];
@@ -174,19 +194,30 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                 const userResponse = await axios.get('/api/auth/me');
                 setUser(userResponse.data);
                 return;
-              } catch (refreshError) {
+              } catch (refreshError: any) {
                 console.error('Token refresh failed:', refreshError);
-                // Don't logout immediately, let the user try to use the app
-                // The global interceptor will handle further 401s
+                
+                // If refresh token is expired or invalid, clear everything
+                if (refreshError.response?.status === 401) {
+                  console.log('Refresh token expired, clearing session...');
+                  logout();
+                  return;
+                }
               }
+            } else {
+              // No refresh token available
+              console.log('No refresh token available, clearing session...');
+              logout();
+              return;
             }
           }
           
-          // Only logout if we can't refresh the token
+          // For other errors, don't logout immediately
           if (error.response?.status === 401) {
             console.log('Authentication failed, but keeping user logged in for now...');
             // Don't logout immediately, let the global interceptor handle it
           } else {
+            console.log('Other authentication error, clearing session...');
             logout();
           }
         }
@@ -283,6 +314,51 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const clearError = () => {
     setError(null);
   };
+
+  // Function to check if tokens are about to expire
+  const checkTokenExpiration = useCallback(() => {
+    const accessToken = localStorage.getItem('access_token');
+    const refreshToken = localStorage.getItem('refresh_token');
+    
+    if (!accessToken || !refreshToken) {
+      return;
+    }
+    
+    try {
+      // Decode the access token to check expiration
+      const payload = JSON.parse(atob(accessToken.split('.')[1]));
+      const expTime = payload.exp * 1000; // Convert to milliseconds
+      const now = Date.now();
+      const timeUntilExpiry = expTime - now;
+      
+      // If token expires in less than 5 minutes, show a warning
+      if (timeUntilExpiry < 5 * 60 * 1000 && timeUntilExpiry > 0) {
+        console.log('Access token expires soon, attempting refresh...');
+        // Trigger a refresh
+        axios.post('/api/auth/refresh', {
+          refresh_token: refreshToken
+        }).then(response => {
+          const { access_token, refresh_token } = response.data;
+          localStorage.setItem('access_token', access_token);
+          localStorage.setItem('refresh_token', refresh_token);
+          setToken(access_token);
+          console.log('Token refreshed successfully');
+        }).catch(error => {
+          console.error('Failed to refresh token:', error);
+        });
+      }
+    } catch (error) {
+      console.error('Error checking token expiration:', error);
+    }
+  }, []);
+
+  // Check token expiration every 5 minutes
+  useEffect(() => {
+    if (token) {
+      const interval = setInterval(checkTokenExpiration, 5 * 60 * 1000); // 5 minutes
+      return () => clearInterval(interval);
+    }
+  }, [token, checkTokenExpiration]);
 
   const value: AuthContextType = {
     user,
