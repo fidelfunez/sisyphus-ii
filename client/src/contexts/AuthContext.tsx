@@ -1,9 +1,36 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import axios from 'axios';
 
 // Set the base URL for all API requests based on environment
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 axios.defaults.baseURL = API_BASE_URL;
+
+// Add request interceptor for debugging
+axios.interceptors.request.use(
+  (config) => {
+    console.log('Making request to:', config.url);
+    console.log('Request method:', config.method);
+    console.log('Request headers:', config.headers);
+    return config;
+  },
+  (error) => {
+    console.error('Request error:', error);
+    return Promise.reject(error);
+  }
+);
+
+// Add response interceptor for debugging
+axios.interceptors.response.use(
+  (response) => {
+    console.log('Response received:', response.status, response.config.url);
+    return response;
+  },
+  (error) => {
+    console.error('Response error:', error.response?.status, error.config?.url);
+    console.error('Error details:', error.response?.data);
+    return Promise.reject(error);
+  }
+);
 
 interface User {
   id: number;
@@ -58,6 +85,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   }, [token]);
 
+  // Define logout function with useCallback to prevent infinite loops
+  const logout = useCallback(() => {
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    setToken(null);
+    setUser(null);
+    delete axios.defaults.headers.common['Authorization'];
+  }, []);
+
   // Check if user is authenticated on mount
   useEffect(() => {
     const checkAuth = async () => {
@@ -74,18 +110,22 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     };
 
     checkAuth();
-  }, [token]);
+  }, [token, logout]);
 
   const login = async (username: string, password: string) => {
     try {
       setIsLoading(true);
       setError(null);
       
+      console.log('Attempting login for username:', username);
+      console.log('API Base URL:', API_BASE_URL);
+      
       const response = await axios.post('/api/auth/login', {
         username,
         password
       });
 
+      console.log('Login response:', response.data);
       const { access_token, refresh_token } = response.data;
       
       localStorage.setItem('access_token', access_token);
@@ -94,11 +134,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setToken(access_token);
       
       // Get user info
+      console.log('Fetching user info...');
       const userResponse = await axios.get('/api/auth/me');
+      console.log('User info response:', userResponse.data);
       setUser(userResponse.data);
       
     } catch (error: any) {
-      setError(error.response?.data?.detail || 'Login failed');
+      const errorMessage = error.response?.data?.detail || 'Login failed';
+      setError(errorMessage);
+      console.error('Login error:', error);
+      console.error('Error response:', error.response);
       throw error;
     } finally {
       setIsLoading(false);
@@ -140,20 +185,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         const messages = error.response.data.detail.map((err: any) => err.msg).join(' ');
         setError(messages);
       } else {
-        setError(error.response?.data?.detail || 'Registration failed');
+        const errorMessage = error.response?.data?.detail || 'Registration failed';
+        setError(errorMessage);
       }
+      console.error('Registration error:', error);
       throw error;
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const logout = () => {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
-    setToken(null);
-    setUser(null);
-    delete axios.defaults.headers.common['Authorization'];
   };
 
   const clearError = () => {

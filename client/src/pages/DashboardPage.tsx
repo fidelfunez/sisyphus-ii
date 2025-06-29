@@ -83,12 +83,22 @@ const DashboardPage: React.FC = () => {
 
   const addTask = async (taskData: { title: string; description?: string; priority: number; category?: string; due_date?: string }) => {
     try {
+      console.log('Creating task with data:', taskData);
+      console.log('API Base URL:', API_BASE_URL);
+      
       const response = await axios.post('/api/tasks/', taskData);
+      console.log('Task creation response:', response.data);
+      
       setTasks(prev => [...prev, response.data]);
       setShowTaskForm(false);
       fetchCategories();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to add task:', error);
+      console.error('Error response:', error.response);
+      // Show error to user (you can add a toast notification here)
+      const errorMessage = error.response?.data?.detail || 'Failed to create task. Please try again.';
+      alert(errorMessage); // Replace with a proper toast notification
+      throw error; // Re-throw to let the form handle it
     }
   };
 

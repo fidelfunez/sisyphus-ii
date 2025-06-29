@@ -44,9 +44,11 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, onCancel }) => {
         category: category.trim() || undefined,
         due_date: dueDate || undefined
       });
-      // Form will be closed by parent component
-    } catch (error) {
+      // Form will be closed by parent component on success
+    } catch (error: any) {
       console.error('Failed to create task:', error);
+      // Don't close the form on error, let user try again
+      // The error is already handled by the parent component
     } finally {
       setIsSubmitting(false);
     }
