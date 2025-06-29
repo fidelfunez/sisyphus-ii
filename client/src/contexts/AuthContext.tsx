@@ -30,11 +30,16 @@ axios.interceptors.response.use(
     console.error('Error details:', error.response?.data);
     
     // Handle token expiration
-    if (error.response?.status === 401 && error.config?.url !== '/api/auth/refresh') {
+    if (error.response?.status === 401 && 
+        error.config?.url !== '/api/auth/refresh' && 
+        !error.config?.url?.includes('/auth/refresh')) {
+      
       const refreshToken = localStorage.getItem('refresh_token');
-      if (refreshToken) {
+      if (refreshToken && !error.config._retry) {
         try {
           console.log('Token expired, attempting refresh...');
+          error.config._retry = true; // Prevent infinite loops
+          
           const refreshResponse = await axios.post('/api/auth/refresh', {
             refresh_token: refreshToken
           });
@@ -52,6 +57,21 @@ axios.interceptors.response.use(
           // Clear tokens and redirect to login
           localStorage.removeItem('access_token');
           localStorage.removeItem('refresh_token');
+          delete axios.defaults.headers.common['Authorization'];
+          
+          // Only redirect if we're not already on the login page
+          if (!window.location.pathname.includes('/login')) {
+            window.location.href = '/login';
+          }
+        }
+      } else if (error.config._retry) {
+        // If we already tried to refresh and failed, clear tokens
+        console.log('Token refresh already attempted, clearing tokens...');
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+        delete axios.defaults.headers.common['Authorization'];
+        
+        if (!window.location.pathname.includes('/login')) {
           window.location.href = '/login';
         }
       }
@@ -156,12 +176,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                 return;
               } catch (refreshError) {
                 console.error('Token refresh failed:', refreshError);
+                // Don't logout immediately, let the user try to use the app
+                // The global interceptor will handle further 401s
               }
             }
           }
           
-          // If refresh failed or no refresh token, logout
-          logout();
+          // Only logout if we can't refresh the token
+          if (error.response?.status === 401) {
+            console.log('Authentication failed, but keeping user logged in for now...');
+            // Don't logout immediately, let the global interceptor handle it
+          } else {
+            logout();
+          }
         }
       }
       setIsLoading(false);
