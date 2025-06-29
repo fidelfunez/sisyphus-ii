@@ -44,6 +44,10 @@ axios.interceptors.response.use(
           
           const refreshResponse = await axios.post('/api/auth/refresh', {
             refresh_token: refreshToken
+          }, {
+            headers: {
+              'Content-Type': 'application/json'
+            }
           });
           
           console.log('Refresh response received:', refreshResponse.data);
@@ -189,6 +193,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                 console.log('Attempting to refresh token...');
                 const refreshResponse = await axios.post('/api/auth/refresh', {
                   refresh_token: refreshToken
+                }, {
+                  headers: {
+                    'Content-Type': 'application/json'
+                  }
                 });
                 
                 const { access_token, refresh_token } = refreshResponse.data;
@@ -343,6 +351,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         // Trigger a refresh
         axios.post('/api/auth/refresh', {
           refresh_token: refreshToken
+        }, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
         }).then(response => {
           const { access_token, refresh_token } = response.data;
           localStorage.setItem('access_token', access_token);
