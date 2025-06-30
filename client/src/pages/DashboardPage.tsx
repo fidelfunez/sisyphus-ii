@@ -8,7 +8,6 @@ import SearchAndFilters from '../components/SearchAndFilters';
 import BulkOperations from '../components/BulkOperations';
 import TaskAnalytics from '../components/TaskAnalytics';
 import ExportImport from '../components/ExportImport';
-import LoadingSpinner from '../components/LoadingSpinner';
 
 // Set the base URL for all API requests based on environment
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
@@ -169,7 +168,7 @@ const DashboardPage: React.FC = () => {
       // Show error to user (you can add a toast notification here)
       alert('Failed to update task. Please try again.');
     }
-  }, [tasks]);
+  }, []);
 
   const deleteTask = useCallback(async (taskId: number) => {
     try {
