@@ -89,6 +89,7 @@ axios.interceptors.response.use(
             localStorage.removeItem('access_token');
             localStorage.removeItem('refresh_token');
             delete axios.defaults.headers.common['Authorization'];
+            console.log('Axios interceptor: Cleared tokens due to refresh error');
           }
         }
       } else if (error.config._retry) {
@@ -97,6 +98,7 @@ axios.interceptors.response.use(
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
         delete axios.defaults.headers.common['Authorization'];
+        console.log('Axios interceptor: Cleared tokens due to retry failure');
         
         if (!window.location.pathname.includes('/login')) {
           window.location.href = '/login';
@@ -107,6 +109,7 @@ axios.interceptors.response.use(
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
         delete axios.defaults.headers.common['Authorization'];
+        console.log('Axios interceptor: Cleared tokens due to no refresh token');
         
         if (!window.location.pathname.includes('/login')) {
           window.location.href = '/login';
@@ -166,20 +169,25 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   // Configure axios defaults
   useEffect(() => {
+    console.log('AuthProvider: Setting up axios defaults with token:', token ? 'exists' : 'null');
     if (token) {
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      console.log('AuthProvider: Set Authorization header to:', `Bearer ${token.substring(0, 20)}...`);
     } else {
       delete axios.defaults.headers.common['Authorization'];
+      console.log('AuthProvider: Cleared Authorization header');
     }
   }, [token]);
 
   // Define logout function with useCallback to prevent infinite loops
   const logout = useCallback(() => {
+    console.log('AuthProvider: Logout function called - clearing tokens and user');
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
     setToken(null);
     setUser(null);
     delete axios.defaults.headers.common['Authorization'];
+    console.log('AuthProvider: Logout completed');
   }, []);
 
   // Check if user is authenticated on mount
@@ -195,6 +203,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       if (token) {
         try {
           console.log('Checking authentication with token...');
+          console.log('Authorization header:', axios.defaults.headers.common['Authorization']);
+          console.log('Full axios headers:', axios.defaults.headers.common);
           const response = await axios.get('/api/auth/me');
           console.log('Auth check successful:', response.data);
           setUser(response.data);
