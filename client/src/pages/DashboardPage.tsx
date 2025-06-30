@@ -61,7 +61,6 @@ const DashboardPage: React.FC = () => {
 
   const [theme, setTheme] = useState(getPreferredTheme);
 
-  // Always sync <html> class and localStorage with theme
   useEffect(() => {
     const html = document.documentElement;
     if (theme === 'dark') {
@@ -73,10 +72,9 @@ const DashboardPage: React.FC = () => {
     }
   }, [theme]);
 
-  // Listen for system preference changes if user hasn't set a preference
   useEffect(() => {
     const stored = localStorage.getItem('theme');
-    if (stored === 'dark' || stored === 'light') return; // User has set a preference
+    if (stored === 'dark' || stored === 'light') return;
     const media = window.matchMedia('(prefers-color-scheme: dark)');
     const handler = (e: MediaQueryListEvent) => {
       setTheme(e.matches ? 'dark' : 'light');
@@ -85,7 +83,6 @@ const DashboardPage: React.FC = () => {
     return () => media.removeEventListener('change', handler);
   }, []);
 
-  // Toggle handler: always switch between 'light' and 'dark'
   const handleThemeToggle = () => {
     setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
   };
