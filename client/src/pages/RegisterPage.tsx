@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { Eye, EyeOff, ArrowRight, Sparkles, Zap, Target, CheckCircle, TrendingUp, Shield, Users, Star, Sun, Moon } from 'lucide-react';
+import { Eye, EyeOff, ArrowRight, Sparkles, Zap, Shield, Users, Star, Sun, Moon } from 'lucide-react';
 
 const RegisterPage: React.FC = () => {
   const [formData, setFormData] = useState({
