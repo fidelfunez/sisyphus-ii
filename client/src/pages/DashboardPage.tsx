@@ -166,7 +166,7 @@ const DashboardPage: React.FC = () => {
     try {
       await Promise.all(taskIds.map(id => axios.post(`/api/tasks/${id}/toggle`)));
       setTasks(prev => prev.map(task => 
-        taskIds.includes(task.id) ? { ...task, is_completed: true, completed_at: new Date().toISOString() } : task
+        taskIds.includes(task.id) ? { ...task, is_completed: true, completed_at: new Date().toISOString().split('T')[0] } : task
       ));
     } catch (error) {
       console.error('Failed to bulk complete tasks:', error);

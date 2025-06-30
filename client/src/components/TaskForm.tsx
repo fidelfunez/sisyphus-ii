@@ -214,21 +214,109 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, onCancel, task }) => {
               <label htmlFor="dueDate" className="block text-sm font-semibold text-slate-900">
                 Due Date (Optional)
               </label>
-              <div className="relative">
-                <Calendar className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400" size={18} />
-                <input
-                  type="date"
-                  id="dueDate"
-                  value={dueDate}
-                  onChange={(e) => setDueDate(e.target.value)}
-                  min={new Date().toISOString().split('T')[0]}
-                  className="w-full pl-12 pr-4 py-4 text-lg border-2 border-slate-200 bg-white/70 rounded-2xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 hover:border-slate-300"
-                  disabled={isSubmitting}
-                />
+              <div className="space-y-3">
+                <div className="relative">
+                  <Calendar className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400" size={18} />
+                  <input
+                    type="date"
+                    id="dueDate"
+                    value={dueDate}
+                    onChange={(e) => setDueDate(e.target.value)}
+                    min={(() => {
+                      const today = new Date();
+                      const year = today.getFullYear();
+                      const month = String(today.getMonth() + 1).padStart(2, '0');
+                      const day = String(today.getDate()).padStart(2, '0');
+                      return `${year}-${month}-${day}`;
+                    })()}
+                    className="w-full pl-12 pr-4 py-4 text-lg border-2 border-slate-200 bg-white/70 rounded-2xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 hover:border-slate-300"
+                    disabled={isSubmitting}
+                  />
+                </div>
+                
+                {/* Quick Date Buttons */}
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const today = new Date();
+                      const year = today.getFullYear();
+                      const month = String(today.getMonth() + 1).padStart(2, '0');
+                      const day = String(today.getDate()).padStart(2, '0');
+                      setDueDate(`${year}-${month}-${day}`);
+                    }}
+                    className={`px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
+                      dueDate === (() => {
+                        const today = new Date();
+                        const year = today.getFullYear();
+                        const month = String(today.getMonth() + 1).padStart(2, '0');
+                        const day = String(today.getDate()).padStart(2, '0');
+                        return `${year}-${month}-${day}`;
+                      })()
+                        ? 'bg-blue-100 text-blue-700 border-2 border-blue-200'
+                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    }`}
+                    disabled={isSubmitting}
+                  >
+                    Today
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const tomorrow = new Date();
+                      tomorrow.setDate(tomorrow.getDate() + 1);
+                      const year = tomorrow.getFullYear();
+                      const month = String(tomorrow.getMonth() + 1).padStart(2, '0');
+                      const day = String(tomorrow.getDate()).padStart(2, '0');
+                      setDueDate(`${year}-${month}-${day}`);
+                    }}
+                    className={`px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
+                      dueDate === (() => {
+                        const tomorrow = new Date();
+                        tomorrow.setDate(tomorrow.getDate() + 1);
+                        const year = tomorrow.getFullYear();
+                        const month = String(tomorrow.getMonth() + 1).padStart(2, '0');
+                        const day = String(tomorrow.getDate()).padStart(2, '0');
+                        return `${year}-${month}-${day}`;
+                      })()
+                        ? 'bg-blue-100 text-blue-700 border-2 border-blue-200'
+                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    }`}
+                    disabled={isSubmitting}
+                  >
+                    Tomorrow
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const nextWeek = new Date();
+                      nextWeek.setDate(nextWeek.getDate() + 7);
+                      const year = nextWeek.getFullYear();
+                      const month = String(nextWeek.getMonth() + 1).padStart(2, '0');
+                      const day = String(nextWeek.getDate()).padStart(2, '0');
+                      setDueDate(`${year}-${month}-${day}`);
+                    }}
+                    className={`px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
+                      dueDate === (() => {
+                        const nextWeek = new Date();
+                        nextWeek.setDate(nextWeek.getDate() + 7);
+                        const year = nextWeek.getFullYear();
+                        const month = nextWeek.getMonth() + 1;
+                        const day = nextWeek.getDate();
+                        return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                      })()
+                        ? 'bg-blue-100 text-blue-700 border-2 border-blue-200'
+                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    }`}
+                    disabled={isSubmitting}
+                  >
+                    Next Week
+                  </button>
+                </div>
               </div>
               {dueDate && (
                 <p className="text-xs text-slate-500">
-                  Due on {new Date(dueDate).toLocaleDateString('en-US', { 
+                  Due on {new Date(dueDate + 'T00:00:00').toLocaleDateString('en-US', { 
                     weekday: 'long', 
                     year: 'numeric', 
                     month: 'long', 
