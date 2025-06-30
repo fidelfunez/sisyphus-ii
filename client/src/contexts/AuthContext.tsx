@@ -1,6 +1,24 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import axios from 'axios';
 
+// Helper functions for dual storage
+const getStoredToken = (key: string): string | null => {
+  // Try localStorage first, then sessionStorage as backup
+  return localStorage.getItem(key) || sessionStorage.getItem(key);
+};
+
+const setStoredToken = (key: string, value: string): void => {
+  // Store in both localStorage and sessionStorage for redundancy
+  localStorage.setItem(key, value);
+  sessionStorage.setItem(key, value);
+};
+
+const removeStoredToken = (key: string): void => {
+  // Remove from both storages
+  localStorage.removeItem(key);
+  sessionStorage.removeItem(key);
+};
+
 console.log('AuthContext: Loading AuthContext module...');
 
 // Set the base URL for all API requests based on environment
@@ -36,7 +54,7 @@ axios.interceptors.response.use(
         error.config?.url !== '/api/auth/refresh' && 
         !error.config?.url?.includes('/auth/refresh')) {
       
-      const refreshToken = localStorage.getItem('refresh_token');
+      const refreshToken = getStoredToken('refresh_token');
       if (refreshToken && !error.config._retry) {
         try {
           console.log('Token expired, attempting refresh...');
@@ -58,8 +76,8 @@ axios.interceptors.response.use(
           console.log('Refresh response received:', refreshResponse.data);
           
           const { access_token, refresh_token } = refreshResponse.data;
-          localStorage.setItem('access_token', access_token);
-          localStorage.setItem('refresh_token', refresh_token);
+          setStoredToken('access_token', access_token);
+          setStoredToken('refresh_token', refresh_token);
           axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
           
           // Retry the original request
@@ -75,8 +93,8 @@ axios.interceptors.response.use(
           // If refresh token is expired or invalid, clear everything
           if (refreshError.response?.status === 401) {
             console.log('Refresh token expired, clearing session and redirecting to login...');
-            localStorage.removeItem('access_token');
-            localStorage.removeItem('refresh_token');
+            removeStoredToken('access_token');
+            removeStoredToken('refresh_token');
             delete axios.defaults.headers.common['Authorization'];
             
             // Only redirect if we're not already on the login page
@@ -86,8 +104,8 @@ axios.interceptors.response.use(
           } else {
             // For other refresh errors, just clear tokens
             console.log('Other refresh error, clearing tokens...');
-            localStorage.removeItem('access_token');
-            localStorage.removeItem('refresh_token');
+            removeStoredToken('access_token');
+            removeStoredToken('refresh_token');
             delete axios.defaults.headers.common['Authorization'];
             console.log('Axios interceptor: Cleared tokens due to refresh error');
           }
@@ -95,8 +113,8 @@ axios.interceptors.response.use(
       } else if (error.config._retry) {
         // If we already tried to refresh and failed, clear tokens
         console.log('Token refresh already attempted, clearing tokens...');
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('refresh_token');
+        removeStoredToken('access_token');
+        removeStoredToken('refresh_token');
         delete axios.defaults.headers.common['Authorization'];
         console.log('Axios interceptor: Cleared tokens due to retry failure');
         
@@ -106,8 +124,8 @@ axios.interceptors.response.use(
       } else if (!refreshToken) {
         // No refresh token available
         console.log('No refresh token available, clearing session...');
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('refresh_token');
+        removeStoredToken('access_token');
+        removeStoredToken('refresh_token');
         delete axios.defaults.headers.common['Authorization'];
         console.log('Axios interceptor: Cleared tokens due to no refresh token');
         
@@ -163,7 +181,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   console.log('AuthProvider: Initializing AuthProvider...');
   
   const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(localStorage.getItem('access_token'));
+  const [token, setToken] = useState<string | null>(getStoredToken('access_token'));
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -182,13 +200,32 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Define logout function with useCallback to prevent infinite loops
   const logout = useCallback(() => {
     console.log('AuthProvider: Logout function called - clearing tokens and user');
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
+    removeStoredToken('access_token');
+    removeStoredToken('refresh_token');
     setToken(null);
     setUser(null);
     delete axios.defaults.headers.common['Authorization'];
     console.log('AuthProvider: Logout completed');
   }, []);
+
+  // Periodic check to restore tokens if localStorage gets cleared
+  useEffect(() => {
+    const checkTokenRestoration = () => {
+      const localToken = localStorage.getItem('access_token');
+      const sessionToken = sessionStorage.getItem('access_token');
+      
+      // If localStorage is empty but sessionStorage has tokens, restore them
+      if (!localToken && sessionToken && !token) {
+        console.log('AuthProvider: Detected localStorage cleared, restoring from sessionStorage');
+        setToken(sessionToken);
+      }
+    };
+
+    // Check every 30 seconds
+    const interval = setInterval(checkTokenRestoration, 30000);
+    
+    return () => clearInterval(interval);
+  }, [token]);
 
   // Check if user is authenticated on mount
   useEffect(() => {
@@ -197,8 +234,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const checkAuth = async () => {
       console.log('AuthProvider: Starting auth check...');
       console.log('AuthProvider: Token from state:', token ? `${token.substring(0, 20)}...` : 'null');
-      console.log('AuthProvider: Token from localStorage:', localStorage.getItem('access_token') ? `${localStorage.getItem('access_token')?.substring(0, 20)}...` : 'null');
-      console.log('AuthProvider: Refresh token from localStorage:', localStorage.getItem('refresh_token') ? `${localStorage.getItem('refresh_token')?.substring(0, 20)}...` : 'null');
+      console.log('AuthProvider: Token from localStorage:', getStoredToken('access_token') ? `${getStoredToken('access_token')?.substring(0, 20)}...` : 'null');
+      console.log('AuthProvider: Refresh token from localStorage:', getStoredToken('refresh_token') ? `${getStoredToken('refresh_token')?.substring(0, 20)}...` : 'null');
+      
+      // Check if we need to restore tokens from sessionStorage
+      if (!token) {
+        const sessionToken = sessionStorage.getItem('access_token');
+        if (sessionToken) {
+          console.log('AuthProvider: Restoring token from sessionStorage');
+          setToken(sessionToken);
+          return; // Let the useEffect run again with the restored token
+        }
+      }
       
       if (token) {
         try {
@@ -213,7 +260,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           
           // If token is expired, try to refresh it
           if (error.response?.status === 401) {
-            const refreshToken = localStorage.getItem('refresh_token');
+            const refreshToken = getStoredToken('refresh_token');
             if (refreshToken) {
               try {
                 console.log('Attempting to refresh token...');
@@ -226,8 +273,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                 });
                 
                 const { access_token, refresh_token } = refreshResponse.data;
-                localStorage.setItem('access_token', access_token);
-                localStorage.setItem('refresh_token', refresh_token);
+                setStoredToken('access_token', access_token);
+                setStoredToken('refresh_token', refresh_token);
                 setToken(access_token);
                 axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
                 
@@ -288,8 +335,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       console.log('Login response:', response.data);
       const { access_token, refresh_token } = response.data;
       
-      localStorage.setItem('access_token', access_token);
-      localStorage.setItem('refresh_token', refresh_token);
+      setStoredToken('access_token', access_token);
+      setStoredToken('refresh_token', refresh_token);
       
       setToken(access_token);
       
@@ -330,8 +377,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       const { access_token, refresh_token } = loginResponse.data;
       
-      localStorage.setItem('access_token', access_token);
-      localStorage.setItem('refresh_token', refresh_token);
+      setStoredToken('access_token', access_token);
+      setStoredToken('refresh_token', refresh_token);
       
       setToken(access_token);
       
@@ -361,8 +408,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   // Function to check if tokens are about to expire
   const checkTokenExpiration = useCallback(() => {
-    const accessToken = localStorage.getItem('access_token');
-    const refreshToken = localStorage.getItem('refresh_token');
+    const accessToken = getStoredToken('access_token');
+    const refreshToken = getStoredToken('refresh_token');
     
     if (!accessToken || !refreshToken) {
       return;
@@ -387,8 +434,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           }
         }).then(response => {
           const { access_token, refresh_token } = response.data;
-          localStorage.setItem('access_token', access_token);
-          localStorage.setItem('refresh_token', refresh_token);
+          setStoredToken('access_token', access_token);
+          setStoredToken('refresh_token', refresh_token);
           setToken(access_token);
           console.log('Token refreshed successfully');
         }).catch(error => {
