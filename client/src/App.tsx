@@ -6,10 +6,16 @@ import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
 import LoadingSpinner from './components/LoadingSpinner';
 
+console.log('App: Loading App component...');
+
 const App: React.FC = () => {
+  console.log('App: App component rendering...');
   const { user, isLoading } = useAuth();
+  
+  console.log('App: Current state - user:', user, 'isLoading:', isLoading);
 
   if (isLoading) {
+    console.log('App: Showing loading spinner...');
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center">
         <LoadingSpinner />
@@ -17,6 +23,7 @@ const App: React.FC = () => {
     );
   }
 
+  console.log('App: Rendering routes...');
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
       <Routes>

@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import axios from 'axios';
 
+console.log('AuthContext: Loading AuthContext module...');
+
 // Set the base URL for all API requests based on environment
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 axios.defaults.baseURL = API_BASE_URL;
@@ -67,6 +69,8 @@ axios.interceptors.response.use(
           console.error('Token refresh failed:', refreshError);
           console.error('Refresh error response:', refreshError.response?.data);
           console.error('Refresh error status:', refreshError.response?.status);
+          console.error('Full refresh error details:', JSON.stringify(refreshError.response?.data, null, 2));
+          console.error('Refresh error message:', refreshError.message);
           
           // If refresh token is expired or invalid, clear everything
           if (refreshError.response?.status === 401) {
@@ -153,6 +157,8 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+  console.log('AuthProvider: Initializing AuthProvider...');
+  
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(localStorage.getItem('access_token'));
   const [isLoading, setIsLoading] = useState(true);
@@ -213,6 +219,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                 return;
               } catch (refreshError: any) {
                 console.error('Token refresh failed:', refreshError);
+                console.error('Refresh error response:', refreshError.response?.data);
+                console.error('Refresh error status:', refreshError.response?.status);
+                console.error('Full refresh error details:', JSON.stringify(refreshError.response?.data, null, 2));
+                console.error('Refresh error message:', refreshError.message);
                 
                 // If refresh token is expired or invalid, clear everything
                 if (refreshError.response?.status === 401) {
