@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 from pydantic import BaseModel
@@ -17,6 +17,10 @@ from schemas import UserCreate, Token, LoginRequest, UserResponse, MessageRespon
 # Add schema for refresh token request
 class RefreshTokenRequest(BaseModel):
     refresh_token: str
+    
+    class Config:
+        # Allow extra fields but ignore them
+        extra = "ignore"
 
 router = APIRouter()
 
@@ -89,12 +93,16 @@ def login(login_data: LoginRequest, db: Session = Depends(get_db)):
     }
 
 @router.post("/refresh", response_model=Token)
-def refresh_token(request: RefreshTokenRequest, db: Session = Depends(get_db)):
+async def refresh_token(request: RefreshTokenRequest, raw_request: Request, db: Session = Depends(get_db)):
     """Refresh access token using refresh token"""
     from utils.auth import verify_token
     
     # Add debugging
     print(f"Refresh token request received: {request.refresh_token[:20]}...")
+    print(f"Request object type: {type(request)}")
+    print(f"Request object: {request}")
+    print(f"Raw request headers: {dict(raw_request.headers)}")
+    print(f"Raw request body: {await raw_request.body()}")
     
     try:
         payload = verify_token(request.refresh_token, "refresh")

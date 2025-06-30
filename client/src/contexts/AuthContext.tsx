@@ -42,11 +42,14 @@ axios.interceptors.response.use(
           
           console.log('Refresh token from localStorage:', refreshToken ? `${refreshToken.substring(0, 20)}...` : 'null');
           
-          const refreshResponse = await axios.post('/api/auth/refresh', {
-            refresh_token: refreshToken
-          }, {
+          // Create the request data
+          const refreshData = { refresh_token: refreshToken };
+          console.log('Sending refresh data:', refreshData);
+          
+          const refreshResponse = await axios.post('/api/auth/refresh', refreshData, {
             headers: {
-              'Content-Type': 'application/json'
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
             }
           });
           
