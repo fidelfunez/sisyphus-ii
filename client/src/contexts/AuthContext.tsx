@@ -1,22 +1,50 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import axios from 'axios';
 
-// Helper functions for dual storage
+// In-memory token storage as ultimate fallback
+let memoryTokens: { access_token?: string; refresh_token?: string } = {};
+
+// Helper functions for robust storage with Brave compatibility
 const getStoredToken = (key: string): string | null => {
-  // Try localStorage first, then sessionStorage as backup
-  return localStorage.getItem(key) || sessionStorage.getItem(key);
+  // Try localStorage first, then sessionStorage, then memory
+  return localStorage.getItem(key) || sessionStorage.getItem(key) || memoryTokens[key as keyof typeof memoryTokens] || null;
 };
 
 const setStoredToken = (key: string, value: string): void => {
-  // Store in both localStorage and sessionStorage for redundancy
-  localStorage.setItem(key, value);
-  sessionStorage.setItem(key, value);
+  // Store in all three locations for maximum persistence
+  try {
+    localStorage.setItem(key, value);
+  } catch (e) {
+    console.log('AuthProvider: localStorage failed, using sessionStorage:', e);
+  }
+  
+  try {
+    sessionStorage.setItem(key, value);
+  } catch (e) {
+    console.log('AuthProvider: sessionStorage failed, using memory:', e);
+  }
+  
+  // Always store in memory as ultimate fallback
+  memoryTokens[key as keyof typeof memoryTokens] = value;
+  console.log('AuthProvider: Token stored in all locations:', key);
 };
 
 const removeStoredToken = (key: string): void => {
-  // Remove from both storages
-  localStorage.removeItem(key);
-  sessionStorage.removeItem(key);
+  // Remove from all locations
+  try {
+    localStorage.removeItem(key);
+  } catch (e) {
+    console.log('AuthProvider: Error removing from localStorage:', e);
+  }
+  
+  try {
+    sessionStorage.removeItem(key);
+  } catch (e) {
+    console.log('AuthProvider: Error removing from sessionStorage:', e);
+  }
+  
+  delete memoryTokens[key as keyof typeof memoryTokens];
+  console.log('AuthProvider: Token removed from all locations:', key);
 };
 
 console.log('AuthContext: Loading AuthContext module...');

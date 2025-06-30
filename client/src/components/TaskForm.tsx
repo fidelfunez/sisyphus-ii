@@ -1,12 +1,27 @@
-import React, { useState } from 'react';
-import { X, Plus, AlertCircle, Calendar, Tag, CheckCircle } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { X, Plus, AlertCircle, Calendar, Tag, CheckCircle, Edit } from 'lucide-react';
+
+interface Task {
+  id: number;
+  title: string;
+  description: string | null;
+  is_completed: boolean;
+  priority: number;
+  category: string | null;
+  due_date: string | null;
+  user_id: number;
+  created_at: string;
+  updated_at: string | null;
+  completed_at: string | null;
+}
 
 interface TaskFormProps {
   onSubmit: (taskData: { title: string; description?: string; priority: number; category?: string; due_date?: string }) => void;
   onCancel: () => void;
+  task?: Task; // Optional task for editing mode
 }
 
-const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, onCancel }) => {
+const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, onCancel, task }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [priority, setPriority] = useState(2);
@@ -20,6 +35,17 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, onCancel }) => {
     'Work', 'Personal', 'Health', 'Finance', 'Learning', 
     'Home', 'Shopping', 'Travel', 'Family', 'Hobbies'
   ];
+
+  // Initialize form with task data if editing
+  useEffect(() => {
+    if (task) {
+      setTitle(task.title);
+      setDescription(task.description || '');
+      setPriority(task.priority);
+      setCategory(task.category || '');
+      setDueDate(task.due_date ? task.due_date.split('T')[0] : '');
+    }
+  }, [task]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,7 +72,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, onCancel }) => {
       });
       // Form will be closed by parent component on success
     } catch (error: any) {
-      console.error('Failed to create task:', error);
+      console.error('Failed to save task:', error);
       // Don't close the form on error, let user try again
       // The error is already handled by the parent component
     } finally {
@@ -60,18 +86,28 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, onCancel }) => {
     { value: 3, label: 'High', color: 'text-red-600', bg: 'bg-red-50', border: 'border-red-200' }
   ];
 
+  const isEditing = !!task;
+
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
       <div className="bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         {/* Enhanced Header */}
         <div className="flex items-center justify-between p-6 border-b border-slate-200">
           <div className="flex items-center space-x-4">
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
-              <Plus className="w-6 h-6 text-white" />
+            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg ${
+              isEditing 
+                ? 'bg-gradient-to-br from-orange-500 to-red-600' 
+                : 'bg-gradient-to-br from-blue-500 to-purple-600'
+            }`}>
+              {isEditing ? <Edit className="w-6 h-6 text-white" /> : <Plus className="w-6 h-6 text-white" />}
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-slate-900">Create New Task</h2>
-              <p className="text-slate-600">Add a new task to your productivity journey</p>
+              <h2 className="text-2xl font-bold text-slate-900">
+                {isEditing ? 'Edit Task' : 'Create New Task'}
+              </h2>
+              <p className="text-slate-600">
+                {isEditing ? 'Update your task details' : 'Add a new task to your productivity journey'}
+              </p>
             </div>
           </div>
           <button
@@ -250,17 +286,21 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, onCancel }) => {
             <button
               type="submit"
               disabled={isSubmitting || !title.trim()}
-              className="px-8 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-2xl font-medium hover:from-blue-600 hover:to-purple-700 focus:outline-none focus:ring-4 focus:ring-blue-500/20 transition-all duration-200 flex items-center space-x-3 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+              className={`px-8 py-3 rounded-2xl font-medium focus:outline-none focus:ring-4 transition-all duration-200 flex items-center space-x-3 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed ${
+                isEditing
+                  ? 'bg-gradient-to-r from-orange-500 to-red-600 text-white hover:from-orange-600 hover:to-red-700 focus:ring-orange-500/20'
+                  : 'bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700 focus:ring-blue-500/20'
+              }`}
             >
               {isSubmitting ? (
                 <>
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  <span>Creating...</span>
+                  <span>{isEditing ? 'Updating...' : 'Creating...'}</span>
                 </>
               ) : (
                 <>
-                  <CheckCircle size={20} />
-                  <span>Create Task</span>
+                  {isEditing ? <Edit size={20} /> : <CheckCircle size={20} />}
+                  <span>{isEditing ? 'Update Task' : 'Create Task'}</span>
                 </>
               )}
             </button>

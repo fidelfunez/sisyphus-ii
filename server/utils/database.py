@@ -9,15 +9,28 @@ load_dotenv()
 # Database URL from environment - default to SQLite for simplicity
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./sisyphus.db")
 
+# Convert postgres:// to postgresql:// for SQLAlchemy compatibility
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+
 # Create SQLAlchemy engine
-engine = create_engine(
-    DATABASE_URL,
-    pool_pre_ping=True,
-    pool_recycle=300,
-    echo=os.getenv("DEBUG", "False").lower() == "true",
+if DATABASE_URL.startswith("sqlite"):
     # SQLite specific configuration
-    connect_args={"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {}
-)
+    engine = create_engine(
+        DATABASE_URL,
+        pool_pre_ping=True,
+        pool_recycle=300,
+        echo=os.getenv("DEBUG", "False").lower() == "true",
+        connect_args={"check_same_thread": False}
+    )
+else:
+    # PostgreSQL configuration
+    engine = create_engine(
+        DATABASE_URL,
+        pool_pre_ping=True,
+        pool_recycle=300,
+        echo=os.getenv("DEBUG", "False").lower() == "true"
+    )
 
 # Create SessionLocal class
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

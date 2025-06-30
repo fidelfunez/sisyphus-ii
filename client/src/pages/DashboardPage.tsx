@@ -35,6 +35,7 @@ const DashboardPage: React.FC = () => {
   const [, setCategories] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showTaskForm, setShowTaskForm] = useState(false);
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [activeTab, setActiveTab] = useState<TabType>('tasks');
   
   // Search and filter states
@@ -100,6 +101,35 @@ const DashboardPage: React.FC = () => {
       alert(errorMessage); // Replace with a proper toast notification
       throw error; // Re-throw to let the form handle it
     }
+  };
+
+  const editTask = async (taskData: { title: string; description?: string; priority: number; category?: string; due_date?: string }) => {
+    if (!editingTask) return;
+    
+    try {
+      console.log('Updating task with data:', taskData);
+      console.log('API Base URL:', API_BASE_URL);
+      
+      const response = await axios.put(`/api/tasks/${editingTask.id}`, taskData);
+      console.log('Task update response:', response.data);
+      
+      setTasks(prev => prev.map(task => 
+        task.id === editingTask.id ? response.data : task
+      ));
+      setEditingTask(null);
+      fetchCategories();
+    } catch (error: any) {
+      console.error('Failed to update task:', error);
+      console.error('Error response:', error.response);
+      // Show error to user (you can add a toast notification here)
+      const errorMessage = error.response?.data?.detail || 'Failed to update task. Please try again.';
+      alert(errorMessage); // Replace with a proper toast notification
+      throw error; // Re-throw to let the form handle it
+    }
+  };
+
+  const handleEditTask = (task: Task) => {
+    setEditingTask(task);
   };
 
   const toggleTask = async (taskId: number) => {
@@ -482,6 +512,7 @@ const DashboardPage: React.FC = () => {
                       task={task}
                       onToggle={() => toggleTask(task.id)}
                       onDelete={() => deleteTask(task.id)}
+                      onEdit={() => handleEditTask(task)}
                     />
                   ))}
                 </div>
@@ -611,6 +642,15 @@ const DashboardPage: React.FC = () => {
         <TaskForm
           onSubmit={addTask}
           onCancel={() => setShowTaskForm(false)}
+        />
+      )}
+
+      {/* Edit Task Form Modal */}
+      {editingTask && (
+        <TaskForm
+          task={editingTask}
+          onSubmit={editTask}
+          onCancel={() => setEditingTask(null)}
         />
       )}
     </div>

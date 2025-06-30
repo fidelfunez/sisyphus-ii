@@ -1,5 +1,5 @@
 import React from 'react';
-import { CheckCircle, Circle, Trash2, Clock, Calendar, Tag, AlertTriangle } from 'lucide-react';
+import { CheckCircle, Circle, Trash2, Clock, Calendar, Tag, AlertTriangle, Edit } from 'lucide-react';
 
 interface Task {
   id: number;
@@ -19,9 +19,10 @@ interface TaskItemProps {
   task: Task;
   onToggle: () => void;
   onDelete: () => void;
+  onEdit: () => void;
 }
 
-const TaskItem: React.FC<TaskItemProps> = ({ task, onToggle, onDelete }) => {
+const TaskItem: React.FC<TaskItemProps> = ({ task, onToggle, onDelete, onEdit }) => {
   const priorityColors = {
     1: { bg: 'bg-green-100', text: 'text-green-700', border: 'border-green-200', icon: 'bg-green-500' },
     2: { bg: 'bg-yellow-100', text: 'text-yellow-700', border: 'border-yellow-200', icon: 'bg-yellow-500' },
@@ -198,6 +199,13 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onToggle, onDelete }) => {
 
             {/* Action Buttons */}
             <div className="flex items-center space-x-2 ml-4">
+              <button
+                onClick={onEdit}
+                className="p-2 text-slate-400 hover:text-blue-500 hover:bg-blue-50 rounded-xl transition-all duration-200 group/edit"
+                title="Edit task"
+              >
+                <Edit size={18} className="group-hover/edit:scale-110 transition-transform" />
+              </button>
               <button
                 onClick={onDelete}
                 className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all duration-200 group/delete"
