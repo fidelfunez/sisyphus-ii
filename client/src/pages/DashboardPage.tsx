@@ -489,7 +489,7 @@ const DashboardPage: React.FC = () => {
         </div>
 
         {/* Tab Navigation */}
-        <div className="bg-white/60 backdrop-blur-xl rounded-3xl p-2 shadow-xl border border-white/20 mb-6">
+        <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-xl rounded-3xl p-2 shadow-xl border border-white/20 dark:border-gray-700/20 mb-6">
           <div className="flex space-x-2">
             {tabs.map((tab) => {
               const Icon = tab.icon;
@@ -500,13 +500,13 @@ const DashboardPage: React.FC = () => {
                   className={`flex-1 px-6 py-4 rounded-2xl font-medium transition-all duration-200 flex items-center justify-center space-x-2 ${
                     activeTab === tab.id
                       ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg'
-                      : 'bg-white/70 text-slate-600 hover:bg-white/90 hover:shadow-md'
+                      : 'bg-white/70 dark:bg-gray-700/70 text-slate-600 dark:text-slate-300 hover:bg-white/90 dark:hover:bg-gray-700/90 hover:shadow-md'
                   } ${tab.id === 'export' ? 'hidden md:flex' : ''}`}
                 >
                   <Icon size={18} />
                   <span>{tab.label}</span>
                   {tab.count !== undefined && (
-                    <span className="px-2 py-1 bg-white/20 rounded-full text-xs font-bold">
+                    <span className="px-2 py-1 bg-white/20 dark:bg-gray-600/20 rounded-full text-xs font-bold">
                       {tab.count}
                     </span>
                   )}
@@ -544,7 +544,7 @@ const DashboardPage: React.FC = () => {
             )}
 
             {/* Task Controls */}
-            <div className="bg-white/60 backdrop-blur-xl rounded-3xl p-6 shadow-xl border border-white/20 mb-8">
+            <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-xl rounded-3xl p-6 shadow-xl border border-white/20 dark:border-gray-700/20 mb-8">
               <div className="flex flex-col lg:flex-row lg:items-center justify-between space-y-4 lg:space-y-0">
                 <div className="flex flex-wrap gap-3">
                   <button
@@ -552,7 +552,7 @@ const DashboardPage: React.FC = () => {
                     className={`px-6 py-3 rounded-2xl font-medium transition-all duration-200 flex items-center space-x-2 ${
                       showBulkOperations
                         ? 'bg-gradient-to-r from-purple-500 to-pink-600 text-white shadow-lg'
-                        : 'bg-white/70 text-slate-600 hover:bg-white/90 hover:shadow-md'
+                        : 'bg-white/70 dark:bg-gray-700/70 text-slate-600 dark:text-slate-300 hover:bg-white/90 dark:hover:bg-gray-700/90 hover:shadow-md'
                     }`}
                   >
                     <Users size={18} />
@@ -566,7 +566,7 @@ const DashboardPage: React.FC = () => {
                       className={`px-6 py-3 rounded-2xl font-medium transition-all duration-200 flex items-center space-x-2 ${
                         categoryFilter !== 'all'
                           ? 'bg-gradient-to-r from-purple-500 to-pink-600 text-white shadow-lg'
-                          : 'bg-white/70 text-slate-600 hover:bg-white/90 hover:shadow-md'
+                          : 'bg-white/70 dark:bg-gray-700/70 text-slate-600 dark:text-slate-300 hover:bg-white/90 dark:hover:bg-gray-700/90 hover:shadow-md'
                       }`}
                     >
                       <Tag size={18} />

@@ -25,10 +25,10 @@ const SearchAndFilters: React.FC<SearchAndFiltersProps> = ({
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
 
   const priorityOptions = [
-    { value: null, label: 'All Priorities', color: 'text-slate-600' },
-    { value: 1, label: 'Low Priority', color: 'text-green-600' },
-    { value: 2, label: 'Medium Priority', color: 'text-yellow-600' },
-    { value: 3, label: 'High Priority', color: 'text-red-600' }
+    { value: null, label: 'All Priorities', color: 'text-slate-600 dark:text-slate-300' },
+    { value: 1, label: 'Low Priority', color: 'text-green-600 dark:text-green-400' },
+    { value: 2, label: 'Medium Priority', color: 'text-yellow-600 dark:text-yellow-400' },
+    { value: 3, label: 'High Priority', color: 'text-red-600 dark:text-red-400' }
   ];
 
   const dateOptions = [
@@ -40,22 +40,22 @@ const SearchAndFilters: React.FC<SearchAndFiltersProps> = ({
   ];
 
   return (
-    <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-6 shadow-xl border border-white/20 mb-6">
+    <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-3xl p-6 shadow-xl border border-white/20 dark:border-gray-700/20 mb-6">
       {/* Search Bar */}
       <div className="flex items-center space-x-4 mb-4">
         <div className="flex-1 relative">
-          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400" size={20} />
+          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 dark:text-slate-500" size={20} />
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => onSearchChange(e.target.value)}
             placeholder="Search tasks by title, description, or category..."
-            className="w-full pl-12 pr-4 py-4 text-lg border-2 border-slate-200 bg-white/70 rounded-2xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 hover:border-slate-300"
+            className="w-full pl-12 pr-4 py-4 text-lg border-2 border-slate-200 dark:border-gray-600 bg-white/70 dark:bg-gray-700/70 rounded-2xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 hover:border-slate-300 dark:hover:border-gray-500 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400"
           />
           {searchTerm && (
             <button
               onClick={() => onSearchChange('')}
-              className="absolute right-4 top-1/2 transform -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-all duration-200"
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 p-1 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-gray-600 rounded-lg transition-all duration-200"
             >
               <X size={16} />
             </button>
@@ -67,7 +67,7 @@ const SearchAndFilters: React.FC<SearchAndFiltersProps> = ({
           className={`px-6 py-4 rounded-2xl font-medium transition-all duration-200 flex items-center space-x-2 ${
             showAdvancedFilters || priorityFilter !== null || dateFilter !== 'all'
               ? 'bg-gradient-to-r from-purple-500 to-pink-600 text-white shadow-lg'
-              : 'bg-white/70 text-slate-600 hover:bg-white/90 hover:shadow-md border-2 border-slate-200'
+              : 'bg-white/70 dark:bg-gray-700/70 text-slate-600 dark:text-slate-300 hover:bg-white/90 dark:hover:bg-gray-700/90 hover:shadow-md border-2 border-slate-200 dark:border-gray-600'
           }`}
         >
           <Filter size={20} />
@@ -78,10 +78,10 @@ const SearchAndFilters: React.FC<SearchAndFiltersProps> = ({
 
       {/* Advanced Filters */}
       {showAdvancedFilters && (
-        <div className="space-y-6 pt-4 border-t border-slate-200">
+        <div className="space-y-6 pt-4 border-t border-slate-200 dark:border-gray-700">
           {/* Priority Filter */}
           <div>
-            <h3 className="text-sm font-semibold text-slate-900 mb-3">Priority Level</h3>
+            <h3 className="text-sm font-semibold text-slate-900 dark:text-white mb-3">Priority Level</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {priorityOptions.map((option) => (
                 <button
@@ -90,7 +90,7 @@ const SearchAndFilters: React.FC<SearchAndFiltersProps> = ({
                   className={`px-4 py-3 rounded-2xl font-medium transition-all duration-200 text-center ${
                     priorityFilter === option.value
                       ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg'
-                      : 'bg-white/70 text-slate-600 hover:bg-white/90 hover:shadow-md border-2 border-slate-200'
+                      : 'bg-white/70 dark:bg-gray-700/70 text-slate-600 dark:text-slate-300 hover:bg-white/90 dark:hover:bg-gray-700/90 hover:shadow-md border-2 border-slate-200 dark:border-gray-600'
                   }`}
                 >
                   <span className={option.color}>{option.label}</span>
@@ -101,7 +101,7 @@ const SearchAndFilters: React.FC<SearchAndFiltersProps> = ({
 
           {/* Date Filter */}
           <div>
-            <h3 className="text-sm font-semibold text-slate-900 mb-3">Due Date</h3>
+            <h3 className="text-sm font-semibold text-slate-900 dark:text-white mb-3">Due Date</h3>
             <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
               {dateOptions.map((option) => (
                 <button
@@ -110,7 +110,7 @@ const SearchAndFilters: React.FC<SearchAndFiltersProps> = ({
                   className={`px-4 py-3 rounded-2xl font-medium transition-all duration-200 text-center ${
                     dateFilter === option.value
                       ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg'
-                      : 'bg-white/70 text-slate-600 hover:bg-white/90 hover:shadow-md border-2 border-slate-200'
+                      : 'bg-white/70 dark:bg-gray-700/70 text-slate-600 dark:text-slate-300 hover:bg-white/90 dark:hover:bg-gray-700/90 hover:shadow-md border-2 border-slate-200 dark:border-gray-600'
                   }`}
                 >
                   <div className="flex flex-col items-center space-y-1">
@@ -125,13 +125,13 @@ const SearchAndFilters: React.FC<SearchAndFiltersProps> = ({
           {/* Show Completed Toggle */}
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-sm font-semibold text-slate-900">Show Completed Tasks</h3>
-              <p className="text-xs text-slate-600">Include completed tasks in search results</p>
+              <h3 className="text-sm font-semibold text-slate-900 dark:text-white">Show Completed Tasks</h3>
+              <p className="text-xs text-slate-600 dark:text-slate-400">Include completed tasks in search results</p>
             </div>
             <button
               onClick={() => onShowCompletedChange(!showCompleted)}
               className={`relative inline-flex h-8 w-16 items-center rounded-full transition-colors duration-200 ${
-                showCompleted ? 'bg-green-500' : 'bg-slate-300'
+                showCompleted ? 'bg-green-500' : 'bg-slate-300 dark:bg-gray-600'
               }`}
             >
               <span
@@ -151,7 +151,7 @@ const SearchAndFilters: React.FC<SearchAndFiltersProps> = ({
                   onPriorityFilterChange(null);
                   onDateFilterChange('all');
                 }}
-                className="px-6 py-3 text-slate-600 bg-white/70 border-2 border-slate-200 rounded-2xl font-medium hover:bg-white/90 hover:border-slate-300 transition-all duration-200 flex items-center space-x-2"
+                className="px-6 py-3 text-slate-600 dark:text-slate-300 bg-white/70 dark:bg-gray-700/70 border-2 border-slate-200 dark:border-gray-600 rounded-2xl font-medium hover:bg-white/90 dark:hover:bg-gray-700/90 hover:border-slate-300 dark:hover:border-gray-500 transition-all duration-200 flex items-center space-x-2"
               >
                 <X size={16} />
                 <span>Clear All Filters</span>

@@ -79,29 +79,29 @@ const BulkOperations: React.FC<BulkOperationsProps> = ({
   return (
     <>
       {/* Bulk Selection Bar */}
-      <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-4 shadow-xl border border-white/20 mb-6">
+      <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-3xl p-4 shadow-xl border border-white/20 dark:border-gray-700/20 mb-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <button
               onClick={handleSelectAll}
-              className="flex items-center space-x-3 p-2 rounded-xl hover:bg-slate-100 transition-all duration-200"
+              className="flex items-center space-x-3 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-gray-700 transition-all duration-200"
             >
               {isAllSelected ? (
-                <CheckSquare size={20} className="text-blue-600" />
+                <CheckSquare size={20} className="text-blue-600 dark:text-blue-400" />
               ) : isPartiallySelected ? (
-                <div className="w-5 h-5 border-2 border-blue-600 rounded bg-blue-100 flex items-center justify-center">
-                  <div className="w-2 h-2 bg-blue-600 rounded"></div>
+                <div className="w-5 h-5 border-2 border-blue-600 dark:border-blue-400 rounded bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center">
+                  <div className="w-2 h-2 bg-blue-600 dark:bg-blue-400 rounded"></div>
                 </div>
               ) : (
-                <Square size={20} className="text-slate-400" />
+                <Square size={20} className="text-slate-400 dark:text-slate-500" />
               )}
-              <span className="text-sm font-medium text-slate-700">
+              <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
                 {isAllSelected ? 'Deselect All' : 'Select All'}
               </span>
             </button>
             
             {selectedCount > 0 && (
-              <span className="text-sm text-slate-600">
+              <span className="text-sm text-slate-600 dark:text-slate-400">
                 {selectedCount} task{selectedCount !== 1 ? 's' : ''} selected
               </span>
             )}
@@ -119,7 +119,7 @@ const BulkOperations: React.FC<BulkOperationsProps> = ({
               
               <button
                 onClick={() => onSelectionChange([])}
-                className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition-all duration-200"
+                className="p-2 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-gray-700 rounded-xl transition-all duration-200"
               >
                 <X size={16} />
               </button>
@@ -129,7 +129,7 @@ const BulkOperations: React.FC<BulkOperationsProps> = ({
 
         {/* Bulk Actions Menu */}
         {showBulkMenu && selectedCount > 0 && (
-          <div className="mt-4 pt-4 border-t border-slate-200">
+          <div className="mt-4 pt-4 border-t border-slate-200 dark:border-gray-700">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               <button
                 onClick={handleBulkComplete}
@@ -150,7 +150,7 @@ const BulkOperations: React.FC<BulkOperationsProps> = ({
               <div className="relative">
                 <select
                   onChange={(e) => handleBulkPriorityChange(Number(e.target.value))}
-                  className="w-full px-4 py-3 bg-white/70 border-2 border-slate-200 rounded-xl font-medium text-slate-700 hover:border-slate-300 focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 appearance-none cursor-pointer"
+                  className="w-full px-4 py-3 bg-white/70 dark:bg-gray-700/70 border-2 border-slate-200 dark:border-gray-600 rounded-xl font-medium text-slate-700 dark:text-white hover:border-slate-300 dark:hover:border-gray-500 focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 appearance-none cursor-pointer"
                   defaultValue=""
                 >
                   <option value="" disabled>Change Priority</option>
@@ -159,7 +159,7 @@ const BulkOperations: React.FC<BulkOperationsProps> = ({
                   <option value={3}>High Priority</option>
                 </select>
                 <div className="absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
-                  <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 text-slate-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
                 </div>
@@ -174,27 +174,27 @@ const BulkOperations: React.FC<BulkOperationsProps> = ({
         {tasks.map((task) => (
           <div
             key={task.id}
-            className="flex items-center space-x-3 p-3 bg-white/60 backdrop-blur-xl rounded-2xl border border-white/20 hover:bg-white/80 transition-all duration-200"
+            className="flex items-center space-x-3 p-3 bg-white/60 dark:bg-gray-700/60 backdrop-blur-xl rounded-2xl border border-white/20 dark:border-gray-600/20 hover:bg-white/80 dark:hover:bg-gray-700/80 transition-all duration-200"
           >
             <button
               onClick={() => handleSelectTask(task.id)}
               className="flex-shrink-0"
             >
               {selectedTasks.includes(task.id) ? (
-                <CheckSquare size={20} className="text-blue-600" />
+                <CheckSquare size={20} className="text-blue-600 dark:text-blue-400" />
               ) : (
-                <Square size={20} className="text-slate-400 hover:text-slate-600" />
+                <Square size={20} className="text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300" />
               )}
             </button>
             
             <div className="flex-1 min-w-0">
-              <h4 className={`text-sm font-medium text-slate-900 truncate ${
-                task.is_completed ? 'line-through text-slate-500' : ''
+              <h4 className={`text-sm font-medium text-slate-900 dark:text-white truncate ${
+                task.is_completed ? 'line-through text-slate-500 dark:text-slate-400' : ''
               }`}>
                 {task.title}
               </h4>
               {task.category && (
-                <p className="text-xs text-slate-500">Category: {task.category}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Category: {task.category}</p>
               )}
             </div>
             
