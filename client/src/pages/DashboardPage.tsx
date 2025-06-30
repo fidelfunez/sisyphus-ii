@@ -30,7 +30,7 @@ interface Task {
 
 type TabType = 'tasks' | 'analytics' | 'export';
 
-const getInitialTheme = () => {
+const getPreferredTheme = () => {
   if (typeof window !== 'undefined') {
     const stored = localStorage.getItem('theme');
     if (stored === 'dark' || stored === 'light') return stored;
@@ -59,8 +59,9 @@ const DashboardPage: React.FC = () => {
   const [selectedTasks, setSelectedTasks] = useState<number[]>([]);
   const [showBulkOperations, setShowBulkOperations] = useState(false);
 
-  const [theme, setTheme] = useState(getInitialTheme);
+  const [theme, setTheme] = useState(getPreferredTheme);
 
+  // Always sync <html> class and localStorage with theme
   useEffect(() => {
     const html = document.documentElement;
     if (theme === 'dark') {
@@ -71,6 +72,23 @@ const DashboardPage: React.FC = () => {
       localStorage.setItem('theme', 'light');
     }
   }, [theme]);
+
+  // Listen for system preference changes if user hasn't set a preference
+  useEffect(() => {
+    const stored = localStorage.getItem('theme');
+    if (stored === 'dark' || stored === 'light') return; // User has set a preference
+    const media = window.matchMedia('(prefers-color-scheme: dark)');
+    const handler = (e: MediaQueryListEvent) => {
+      setTheme(e.matches ? 'dark' : 'light');
+    };
+    media.addEventListener('change', handler);
+    return () => media.removeEventListener('change', handler);
+  }, []);
+
+  // Toggle handler: always switch between 'light' and 'dark'
+  const handleThemeToggle = () => {
+    setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
+  };
 
   useEffect(() => {
     fetchTasks();
@@ -380,7 +398,7 @@ const DashboardPage: React.FC = () => {
             
             <div className="flex items-center space-x-6">
               <button
-                onClick={() => setTheme(theme => theme === 'dark' ? 'light' : 'dark')}
+                onClick={handleThemeToggle}
                 className="p-3 text-slate-600 dark:text-yellow-300 hover:text-slate-900 dark:hover:text-yellow-400 hover:bg-slate-100 dark:hover:bg-gray-800 rounded-xl transition-all duration-200 group"
                 title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
               >
