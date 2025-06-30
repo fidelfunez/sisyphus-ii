@@ -208,6 +208,82 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     console.log('AuthProvider: Logout completed');
   }, []);
 
+  // Test to detect if storage is being cleared externally
+  useEffect(() => {
+    const testKey = 'storage_test_key';
+    const testValue = 'test_value_' + Date.now();
+    
+    // Set a test value
+    localStorage.setItem(testKey, testValue);
+    sessionStorage.setItem(testKey, testValue);
+    
+    console.log('AuthProvider: Set test values in storage:', {
+      localStorage: localStorage.getItem(testKey),
+      sessionStorage: sessionStorage.getItem(testKey)
+    });
+    
+    // Check if test values are cleared after a delay
+    const checkTestValues = () => {
+      const localTest = localStorage.getItem(testKey);
+      const sessionTest = sessionStorage.getItem(testKey);
+      
+      console.log('AuthProvider: Test values check:', {
+        localStorage: localTest,
+        sessionStorage: sessionTest
+      });
+      
+      if (!localTest && !sessionTest) {
+        console.log('AuthProvider: WARNING - Both storages were cleared externally!');
+      } else if (!localTest) {
+        console.log('AuthProvider: localStorage was cleared externally');
+      } else if (!sessionTest) {
+        console.log('AuthProvider: sessionStorage was cleared externally');
+      }
+    };
+    
+    // Check after 1 minute
+    const timeout = setTimeout(checkTestValues, 60000);
+    
+    return () => {
+      clearTimeout(timeout);
+      localStorage.removeItem(testKey);
+      sessionStorage.removeItem(testKey);
+    };
+  }, []);
+
+  // Listen for storage changes to detect when tokens are cleared
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'access_token' || e.key === 'refresh_token') {
+        console.log('AuthProvider: Storage change detected:', {
+          key: e.key,
+          oldValue: e.oldValue ? `${e.oldValue.substring(0, 20)}...` : 'null',
+          newValue: e.newValue ? `${e.newValue.substring(0, 20)}...` : 'null',
+          url: e.url,
+          storageArea: e.storageArea
+        });
+        
+        // If tokens were cleared, try to restore from other storage
+        if (e.newValue === null && e.oldValue) {
+          console.log('AuthProvider: Token cleared from storage, attempting restoration...');
+          const otherStorage = e.storageArea === localStorage ? sessionStorage : localStorage;
+          const backupToken = otherStorage.getItem(e.key!);
+          if (backupToken) {
+            console.log('AuthProvider: Found backup token, restoring...');
+            setStoredToken(e.key!, backupToken);
+            if (e.key === 'access_token') {
+              setToken(backupToken);
+            }
+          }
+        }
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
+
   // Periodic check to restore tokens if localStorage gets cleared
   useEffect(() => {
     const checkTokenRestoration = () => {
@@ -236,6 +312,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       console.log('AuthProvider: Token from state:', token ? `${token.substring(0, 20)}...` : 'null');
       console.log('AuthProvider: Token from localStorage:', getStoredToken('access_token') ? `${getStoredToken('access_token')?.substring(0, 20)}...` : 'null');
       console.log('AuthProvider: Refresh token from localStorage:', getStoredToken('refresh_token') ? `${getStoredToken('refresh_token')?.substring(0, 20)}...` : 'null');
+      
+      // Detailed storage inspection
+      console.log('AuthProvider: localStorage access_token:', localStorage.getItem('access_token') ? `${localStorage.getItem('access_token')?.substring(0, 20)}...` : 'null');
+      console.log('AuthProvider: sessionStorage access_token:', sessionStorage.getItem('access_token') ? `${sessionStorage.getItem('access_token')?.substring(0, 20)}...` : 'null');
+      console.log('AuthProvider: localStorage refresh_token:', localStorage.getItem('refresh_token') ? `${localStorage.getItem('refresh_token')?.substring(0, 20)}...` : 'null');
+      console.log('AuthProvider: sessionStorage refresh_token:', sessionStorage.getItem('refresh_token') ? `${sessionStorage.getItem('refresh_token')?.substring(0, 20)}...` : 'null');
       
       // Check if we need to restore tokens from sessionStorage
       if (!token) {
