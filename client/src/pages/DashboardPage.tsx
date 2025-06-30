@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { Plus, LogOut, Target, BarChart3, Download, Circle, CheckCircle, Zap, Calendar, Users, Tag } from 'lucide-react';
+import { Plus, LogOut, Target, BarChart3, Download, Circle, CheckCircle, Zap, Calendar, Users, Tag, Sun, Moon } from 'lucide-react';
 import axios from 'axios';
 import TaskForm from '../components/TaskForm';
 import TaskItem from '../components/TaskItem';
@@ -8,6 +8,7 @@ import SearchAndFilters from '../components/SearchAndFilters';
 import BulkOperations from '../components/BulkOperations';
 import TaskAnalytics from '../components/TaskAnalytics';
 import ExportImport from '../components/ExportImport';
+import { toast } from 'react-hot-toast';
 
 // Set the base URL for all API requests based on environment
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
@@ -48,6 +49,26 @@ const DashboardPage: React.FC = () => {
   // Bulk operations states
   const [selectedTasks, setSelectedTasks] = useState<number[]>([]);
   const [showBulkOperations, setShowBulkOperations] = useState(false);
+
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('theme');
+      if (stored) return stored === 'dark';
+      return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    const html = document.documentElement;
+    if (isDarkMode) {
+      html.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      html.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  }, [isDarkMode]);
 
   useEffect(() => {
     fetchTasks();
@@ -98,7 +119,7 @@ const DashboardPage: React.FC = () => {
       console.error('Error response:', error.response);
       // Show error to user (you can add a toast notification here)
       const errorMessage = error.response?.data?.detail || 'Failed to create task. Please try again.';
-      alert(errorMessage); // Replace with a proper toast notification
+      toast.error(errorMessage);
       throw error; // Re-throw to let the form handle it
     }
   };
@@ -123,7 +144,7 @@ const DashboardPage: React.FC = () => {
       console.error('Error response:', error.response);
       // Show error to user (you can add a toast notification here)
       const errorMessage = error.response?.data?.detail || 'Failed to update task. Please try again.';
-      alert(errorMessage); // Replace with a proper toast notification
+      toast.error(errorMessage);
       throw error; // Re-throw to let the form handle it
     }
   };
@@ -167,7 +188,7 @@ const DashboardPage: React.FC = () => {
           ));
           
           // Show error to user (you can add a toast notification here)
-          alert('Failed to update task. Please try again.');
+          toast.error('Failed to update task. Please try again.');
         });
 
       return updatedTasks;
@@ -197,7 +218,7 @@ const DashboardPage: React.FC = () => {
           
           // Revert optimistic update on error
           setTasks(prev => [...prev, ...tasksToDelete]);
-          alert('Failed to delete some tasks. Please try again.');
+          toast.error('Failed to delete some tasks. Please try again.');
         });
 
       return updatedTasks;
@@ -222,7 +243,7 @@ const DashboardPage: React.FC = () => {
             const originalTask = tasksToUpdate.find(t => t.id === task.id);
             return originalTask ? originalTask : task;
           }));
-          alert('Failed to complete some tasks. Please try again.');
+          toast.error('Failed to complete some tasks. Please try again.');
         });
 
       return updatedTasks;
@@ -247,7 +268,7 @@ const DashboardPage: React.FC = () => {
             const originalTask = tasksToUpdate.find(t => t.id === task.id);
             return originalTask ? originalTask : task;
           }));
-          alert('Failed to update priority for some tasks. Please try again.');
+          toast.error('Failed to update priority for some tasks. Please try again.');
         });
 
       return updatedTasks;
@@ -337,9 +358,9 @@ const DashboardPage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-gray-950 dark:to-gray-900">
       {/* Enhanced Header */}
-      <header className="bg-white/80 backdrop-blur-xl border-b border-white/20 sticky top-0 z-50 shadow-sm">
+      <header className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-b border-white/20 dark:border-gray-800 sticky top-0 z-50 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
             <div className="flex items-center space-x-6">
@@ -350,21 +371,28 @@ const DashboardPage: React.FC = () => {
                 </svg>
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-slate-900">Sisyphus II</h1>
-                <p className="text-sm text-slate-600">Master your daily tasks</p>
+                <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Sisyphus II</h1>
+                <p className="text-sm text-slate-600 dark:text-slate-300">Master your daily tasks</p>
               </div>
             </div>
             
             <div className="flex items-center space-x-6">
+              <button
+                onClick={() => setIsDarkMode(dm => !dm)}
+                className="p-3 text-slate-600 dark:text-yellow-300 hover:text-slate-900 dark:hover:text-yellow-400 hover:bg-slate-100 dark:hover:bg-gray-800 rounded-xl transition-all duration-200 group"
+                title={isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+              >
+                {isDarkMode ? <Sun size={20} className="transition-transform" /> : <Moon size={20} className="transition-transform" />}
+              </button>
               <div className="text-right">
-                <p className="text-sm font-medium text-slate-900">
+                <p className="text-sm font-medium text-slate-900 dark:text-white">
                   {user?.full_name || user?.username}
                 </p>
-                <p className="text-xs text-slate-500">Productivity Master</p>
+                <p className="text-xs text-slate-500 dark:text-slate-300">Productivity Master</p>
               </div>
               <button
                 onClick={logout}
-                className="p-3 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition-all duration-200 group"
+                className="p-3 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-gray-800 rounded-xl transition-all duration-200 group"
               >
                 <LogOut size={20} className="group-hover:scale-110 transition-transform" />
               </button>
