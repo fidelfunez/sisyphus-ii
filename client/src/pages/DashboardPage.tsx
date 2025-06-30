@@ -649,11 +649,11 @@ const DashboardPage: React.FC = () => {
 
       {/* Beautiful Footer */}
       <footer className="bg-white/60 dark:bg-gray-900/80 backdrop-blur-xl border-t border-white/20 dark:border-gray-800 mt-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
             {/* Brand Section */}
-            <div className="col-span-1 md:col-span-2">
-              <div className="flex items-center space-x-4 mb-4">
+            <div className="col-span-1 sm:col-span-2">
+              <div className="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-4 mb-4">
                 <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
                   <svg viewBox="0 0 24 24" fill="none" className="text-white w-8 h-8" xmlns="http://www.w3.org/2000/svg">
                     <path d="M3 20L12 4L21 20H3Z" fill="currentColor" />
@@ -661,11 +661,11 @@ const DashboardPage: React.FC = () => {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-slate-900 dark:text-white">Sisyphus II</h3>
-                  <p className="text-slate-600 dark:text-slate-300">Master your daily tasks</p>
+                  <h3 className="text-lg md:text-xl font-bold text-slate-900 dark:text-white">Sisyphus II</h3>
+                  <p className="text-slate-600 dark:text-slate-300 text-sm md:text-base">Master your daily tasks</p>
                 </div>
               </div>
-              <p className="text-slate-600 dark:text-slate-300 max-w-md">
+              <p className="text-slate-600 dark:text-slate-300 text-sm md:text-base max-w-md">
                 Transform your productivity with our intuitive task management system. 
                 Built with modern technology and designed for efficiency.
               </p>
@@ -673,49 +673,49 @@ const DashboardPage: React.FC = () => {
 
             {/* Quick Stats */}
             <div>
-              <h4 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Your Progress</h4>
-              <div className="space-y-3">
+              <h4 className="text-base md:text-lg font-semibold text-slate-900 dark:text-white mb-3 md:mb-4">Your Progress</h4>
+              <div className="space-y-2 md:space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-600 dark:text-slate-300">Completion Rate</span>
-                  <span className="font-semibold text-green-600 dark:text-green-300">{completionRate}%</span>
+                  <span className="text-slate-600 dark:text-slate-300 text-sm">Completion Rate</span>
+                  <span className="font-semibold text-green-600 dark:text-green-300 text-sm">{completionRate}%</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-600 dark:text-slate-300">Active Tasks</span>
-                  <span className="font-semibold text-blue-600 dark:text-blue-300">{pendingCount}</span>
+                  <span className="text-slate-600 dark:text-slate-300 text-sm">Active Tasks</span>
+                  <span className="font-semibold text-blue-600 dark:text-blue-300 text-sm">{pendingCount}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-600 dark:text-slate-300">Overdue Tasks</span>
-                  <span className="font-semibold text-red-600 dark:text-red-300">{overdueCount}</span>
+                  <span className="text-slate-600 dark:text-slate-300 text-sm">Overdue Tasks</span>
+                  <span className="font-semibold text-red-600 dark:text-red-300 text-sm">{overdueCount}</span>
                 </div>
               </div>
             </div>
 
             {/* Quick Actions */}
             <div>
-              <h4 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Quick Actions</h4>
-              <div className="space-y-3">
+              <h4 className="text-base md:text-lg font-semibold text-slate-900 dark:text-white mb-3 md:mb-4">Quick Actions</h4>
+              <div className="space-y-2 md:space-y-3">
                 <button
                   onClick={() => {
                     setActiveTab('tasks');
                     setShowTaskForm(true);
                   }}
-                  className="w-full text-left px-4 py-2 text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/40 rounded-xl transition-all duration-200 flex items-center space-x-2"
+                  className="w-full text-left px-3 md:px-4 py-2 text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/40 rounded-xl transition-all duration-200 flex items-center space-x-2 text-sm"
                 >
-                  <Plus size={16} />
+                  <Plus size={14} className="md:w-4 md:h-4" />
                   <span>Add New Task</span>
                 </button>
                 <button
                   onClick={() => setActiveTab('analytics')}
-                  className="w-full text-left px-4 py-2 text-slate-600 dark:text-slate-300 hover:text-purple-600 dark:hover:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/40 rounded-xl transition-all duration-200 flex items-center space-x-2"
+                  className="w-full text-left px-3 md:px-4 py-2 text-slate-600 dark:text-slate-300 hover:text-purple-600 dark:hover:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/40 rounded-xl transition-all duration-200 flex items-center space-x-2 text-sm"
                 >
-                  <BarChart3 size={16} />
+                  <BarChart3 size={14} className="md:w-4 md:h-4" />
                   <span>View Analytics</span>
                 </button>
                 <button
                   onClick={() => setActiveTab('export')}
-                  className="w-full text-left px-4 py-2 text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/40 rounded-xl transition-all duration-200 flex items-center space-x-2"
+                  className="w-full text-left px-3 md:px-4 py-2 text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/40 rounded-xl transition-all duration-200 flex items-center space-x-2 text-sm"
                 >
-                  <Download size={16} />
+                  <Download size={14} className="md:w-4 md:h-4" />
                   <span>Export Tasks</span>
                 </button>
               </div>
@@ -723,32 +723,34 @@ const DashboardPage: React.FC = () => {
           </div>
 
           {/* Bottom Bar */}
-          <div className="border-t border-slate-200 dark:border-gray-800 mt-8 pt-8 flex flex-col md:flex-row items-start justify-between">
-            <div className="flex-1">
-              <p className="text-slate-500 dark:text-slate-400 text-sm mb-2">
+          <div className="border-t border-slate-200 dark:border-gray-800 mt-6 md:mt-8 pt-6 md:pt-8 flex flex-col lg:flex-row items-start justify-between space-y-4 lg:space-y-0">
+            <div className="flex-1 space-y-2">
+              <p className="text-slate-500 dark:text-slate-400 text-sm">
                 © 2025 Sisyphus II. Built with 🧡 for productivity.
               </p>
-              <p className="text-slate-400 dark:text-slate-500 text-xs leading-relaxed max-w-xl mb-1">
+              <p className="text-slate-400 dark:text-slate-500 text-xs leading-relaxed max-w-xl">
                 Sisyphus II was built between Roatán, Honduras 🇭🇳 and The Woodlands, Texas&nbsp;🇺🇸.
               </p>
               <p className="text-slate-400 dark:text-slate-500 text-xs leading-relaxed max-w-2xl">
                 Dedicated to the people of Honduras, to the builders rising from unlikely places, and to a freer world. ₿
               </p>
             </div>
-            <div className="flex flex-col items-end mt-4 md:mt-0 md:ml-8">
-              <div className="flex items-center space-x-6 mb-2">
+            <div className="flex flex-col items-start lg:items-end lg:ml-8 space-y-2">
+              <div className="flex flex-col sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-6">
                 <span className="text-slate-400 dark:text-slate-500 text-sm">React + FastAPI + PostgreSQL</span>
                 <div className="flex items-center space-x-2">
                   <div className="w-2 h-2 bg-green-500 dark:bg-green-400 rounded-full animate-pulse"></div>
                   <span className="text-green-600 dark:text-green-300 text-sm font-medium">Live</span>
                 </div>
               </div>
-              <p className="text-slate-400 dark:text-slate-500 text-xs text-right leading-relaxed max-w-xs">
-                Fidel Fúnez C. — Sovereign Builder
-              </p>
-              <p className="text-slate-400 dark:text-slate-500 text-xs text-right leading-relaxed max-w-xs">
-                Independent Dev, and relentless Bitcoiner.
-              </p>
+              <div className="text-left lg:text-right">
+                <p className="text-slate-400 dark:text-slate-500 text-xs leading-relaxed max-w-xs">
+                  Fidel Fúnez C. — Sovereign Builder
+                </p>
+                <p className="text-slate-400 dark:text-slate-500 text-xs leading-relaxed max-w-xs">
+                  Independent Dev, and relentless Bitcoiner.
+                </p>
+              </div>
             </div>
           </div>
         </div>

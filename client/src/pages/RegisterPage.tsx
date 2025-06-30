@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { Eye, EyeOff, ArrowRight, Sparkles, Zap, Shield, Users, Star } from 'lucide-react';
+import { Eye, EyeOff, ArrowRight, Sparkles, Zap, Target, CheckCircle, TrendingUp, Shield, Users, Star, Sun, Moon } from 'lucide-react';
 
 const RegisterPage: React.FC = () => {
   const [formData, setFormData] = useState({
+    fullName: '',
     username: '',
     email: '',
-    fullName: '',
     password: '',
     confirmPassword: ''
   });
@@ -17,8 +17,26 @@ const RegisterPage: React.FC = () => {
   const { register, isLoading, error, clearError } = useAuth();
   const navigate = useNavigate();
 
+  // Dark mode state
+  const [theme, setTheme] = useState(() => {
+    const stored = localStorage.getItem('theme');
+    if (stored === 'dark' || stored === 'light') return stored;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  });
+
   // Animated background elements
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const html = document.documentElement;
+    if (theme === 'dark') {
+      html.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      html.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  }, [theme]);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -28,6 +46,10 @@ const RegisterPage: React.FC = () => {
     window.addEventListener('mousemove', handleMouseMove);
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
+
+  const handleThemeToggle = () => {
+    setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -65,6 +87,15 @@ const RegisterPage: React.FC = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-950 dark:to-gray-900 relative overflow-hidden">
+      {/* Dark Mode Toggle */}
+      <button
+        onClick={handleThemeToggle}
+        className="fixed top-4 right-4 z-50 p-3 text-slate-600 dark:text-yellow-300 hover:text-slate-900 dark:hover:text-yellow-400 hover:bg-white/80 dark:hover:bg-gray-800/80 backdrop-blur-sm rounded-xl transition-all duration-200 group shadow-lg"
+        title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+      >
+        {theme === 'dark' ? <Sun size={20} className="transition-transform" /> : <Moon size={20} className="transition-transform" />}
+      </button>
+
       {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
         {/* Floating Orbs */}
