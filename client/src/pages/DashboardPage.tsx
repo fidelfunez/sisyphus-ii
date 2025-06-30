@@ -61,7 +61,7 @@ const DashboardPage: React.FC = () => {
 
   const [theme, setTheme] = useState(getPreferredTheme);
 
-  useEffect(() => {
+Successfully imported 5 tasks!  useEffect(() => {
     const html = document.documentElement;
     if (theme === 'dark') {
       html.classList.add('dark');
@@ -501,7 +501,7 @@ const DashboardPage: React.FC = () => {
                     activeTab === tab.id
                       ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg'
                       : 'bg-white/70 text-slate-600 hover:bg-white/90 hover:shadow-md'
-                  }`}
+                  } ${tab.id === 'export' ? 'hidden md:flex' : ''}`}
                 >
                   <Icon size={18} />
                   <span>{tab.label}</span>

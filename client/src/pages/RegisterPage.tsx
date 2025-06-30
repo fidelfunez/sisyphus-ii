@@ -64,7 +64,7 @@ const RegisterPage: React.FC = () => {
   ];
 
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 relative overflow-hidden">
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-950 dark:to-gray-900 relative overflow-hidden">
       {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
         {/* Floating Orbs */}
@@ -96,9 +96,9 @@ const RegisterPage: React.FC = () => {
 
       {/* Main Content */}
       <div className="relative z-10 flex-1 flex items-center justify-center p-2 w-full h-full">
-        <div className="w-full max-w-5xl grid grid-cols-2 gap-6 items-stretch h-full">
-          {/* Left Side - Benefits & Branding */}
-          <div className="flex flex-col justify-center h-full w-full max-w-xl bg-gradient-to-br from-blue-50 via-purple-50 to-indigo-50 rounded-2xl shadow-xl p-4 relative overflow-hidden flex-1">
+        <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch h-full">
+          {/* Left Side - Benefits & Branding (Hidden on mobile) */}
+          <div className="hidden md:flex flex-col justify-center h-full w-full max-w-xl bg-gradient-to-br from-blue-50 via-purple-50 to-indigo-50 rounded-2xl shadow-xl p-4 relative overflow-hidden flex-1">
             {/* Brand Section */}
             <div className="flex flex-col items-center pt-1 pb-3 mb-3">
               <div className="w-12 h-12 bg-gradient-to-br from-blue-500 via-purple-600 to-indigo-600 rounded-2xl mb-2 flex items-center justify-center shadow-xl relative overflow-hidden">
@@ -169,16 +169,16 @@ const RegisterPage: React.FC = () => {
 
           {/* Right Side - Registration Form */}
           <div className="w-full max-w-md mx-auto">
-            {/* Mobile Brand */}
-            <div className="hidden">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl mx-auto mb-2 flex items-center justify-center shadow-xl">
-                <svg viewBox="0 0 24 24" fill="none" className="text-white w-6 h-6" xmlns="http://www.w3.org/2000/svg">
+            {/* Mobile Brand (Visible only on mobile) */}
+            <div className="md:hidden text-center mb-6">
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl mx-auto mb-3 flex items-center justify-center shadow-xl">
+                <svg viewBox="0 0 24 24" fill="none" className="text-white w-8 h-8" xmlns="http://www.w3.org/2000/svg">
                   <path d="M3 20L12 4L21 20H3Z" fill="currentColor" />
                   <path d="M9 16L12 12L15 16" stroke="#fbbf24" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </div>
-              <h1 className="text-xl font-bold text-slate-900 mb-1">Join Sisyphus</h1>
-              <p className="text-slate-600 text-xs">Create your account and start your journey</p>
+              <h1 className="text-2xl font-bold text-slate-900 mb-1">Join Sisyphus</h1>
+              <p className="text-slate-600 text-sm">Create your account and start your journey</p>
             </div>
 
             {/* Registration Form */}
