@@ -422,12 +422,12 @@ const DashboardPage: React.FC = () => {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Enhanced Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
-          <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-6 shadow-xl border border-white/20 hover:shadow-2xl transition-all duration-300 group">
+          <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-3xl p-6 shadow-xl border border-white/20 dark:border-gray-700/20 hover:shadow-2xl transition-all duration-300 group">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-slate-600 mb-1">Total Tasks</p>
-                <p className="text-4xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors">{tasks.length}</p>
-                <p className="text-xs text-slate-500 mt-1">Your journey continues</p>
+                <p className="text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">Total Tasks</p>
+                <p className="text-4xl font-bold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">{tasks.length}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Your journey continues</p>
               </div>
               <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
                 <Target className="w-7 h-7 text-white" />
@@ -435,12 +435,12 @@ const DashboardPage: React.FC = () => {
             </div>
           </div>
           
-          <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-6 shadow-xl border border-white/20 hover:shadow-2xl transition-all duration-300 group">
+          <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-3xl p-6 shadow-xl border border-white/20 dark:border-gray-700/20 hover:shadow-2xl transition-all duration-300 group">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-slate-600 mb-1">Pending</p>
-                <p className="text-4xl font-bold text-orange-600 group-hover:text-orange-700 transition-colors">{pendingCount}</p>
-                <p className="text-xs text-slate-500 mt-1">Ready to conquer</p>
+                <p className="text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">Pending</p>
+                <p className="text-4xl font-bold text-orange-600 dark:text-orange-400 group-hover:text-orange-700 dark:group-hover:text-orange-300 transition-colors">{pendingCount}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Ready to conquer</p>
               </div>
               <div className="w-14 h-14 bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
                 <Circle className="w-7 h-7 text-white" />
@@ -448,12 +448,12 @@ const DashboardPage: React.FC = () => {
             </div>
           </div>
           
-          <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-6 shadow-xl border border-white/20 hover:shadow-2xl transition-all duration-300 group">
+          <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-3xl p-6 shadow-xl border border-white/20 dark:border-gray-700/20 hover:shadow-2xl transition-all duration-300 group">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-slate-600 mb-1">Completed</p>
-                <p className="text-4xl font-bold text-green-600 group-hover:text-green-700 transition-colors">{completedCount}</p>
-                <p className="text-xs text-slate-500 mt-1">{completionRate}% success rate</p>
+                <p className="text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">Completed</p>
+                <p className="text-4xl font-bold text-green-600 dark:text-green-400 group-hover:text-green-700 dark:group-hover:text-green-300 transition-colors">{completedCount}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{completionRate}% success rate</p>
               </div>
               <div className="w-14 h-14 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
                 <CheckCircle className="w-7 h-7 text-white" />
@@ -461,12 +461,12 @@ const DashboardPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-6 shadow-xl border border-white/20 hover:shadow-2xl transition-all duration-300 group">
+          <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-3xl p-6 shadow-xl border border-white/20 dark:border-gray-700/20 hover:shadow-2xl transition-all duration-300 group">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-slate-600 mb-1">High Priority</p>
-                <p className="text-4xl font-bold text-red-600 group-hover:text-red-700 transition-colors">{highPriorityCount}</p>
-                <p className="text-xs text-slate-500 mt-1">Urgent attention needed</p>
+                <p className="text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">High Priority</p>
+                <p className="text-4xl font-bold text-red-600 dark:text-red-400 group-hover:text-red-700 dark:group-hover:text-red-300 transition-colors">{highPriorityCount}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Urgent attention needed</p>
               </div>
               <div className="w-14 h-14 bg-gradient-to-br from-red-500 to-pink-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
                 <Zap className="w-7 h-7 text-white" />
@@ -474,12 +474,12 @@ const DashboardPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-6 shadow-xl border border-white/20 hover:shadow-2xl transition-all duration-300 group">
+          <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-3xl p-6 shadow-xl border border-white/20 dark:border-gray-700/20 hover:shadow-2xl transition-all duration-300 group">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-slate-600 mb-1">Overdue</p>
-                <p className="text-4xl font-bold text-red-600 group-hover:text-red-700 transition-colors">{overdueCount}</p>
-                <p className="text-xs text-slate-500 mt-1">Past due date</p>
+                <p className="text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">Overdue</p>
+                <p className="text-4xl font-bold text-red-600 dark:text-red-400 group-hover:text-red-700 dark:group-hover:text-red-300 transition-colors">{overdueCount}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Past due date</p>
               </div>
               <div className="w-14 h-14 bg-gradient-to-br from-red-500 to-orange-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
                 <Calendar className="w-7 h-7 text-white" />
@@ -593,20 +593,20 @@ const DashboardPage: React.FC = () => {
               {isLoading ? (
                 <div className="text-center py-16">
                   <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
-                  <p className="text-slate-600 text-lg">Loading your tasks...</p>
-                  <p className="text-slate-500 text-sm mt-2">Preparing your productivity journey</p>
+                  <p className="text-slate-600 dark:text-slate-300 text-lg">Loading your tasks...</p>
+                  <p className="text-slate-500 dark:text-slate-400 text-sm mt-2">Preparing your productivity journey</p>
                 </div>
               ) : filteredTasks.length === 0 ? (
                 <div className="text-center py-16">
-                  <div className="w-24 h-24 bg-gradient-to-br from-slate-100 to-slate-200 rounded-3xl mx-auto mb-6 flex items-center justify-center">
-                    <CheckCircle className="w-12 h-12 text-slate-400" />
+                  <div className="w-24 h-24 bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-800 rounded-3xl mx-auto mb-6 flex items-center justify-center">
+                    <CheckCircle className="w-12 h-12 text-slate-400 dark:text-slate-500" />
                   </div>
-                  <h3 className="text-2xl font-bold text-slate-900 mb-3">
+                  <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-3">
                     {searchTerm || priorityFilter !== null || dateFilter !== 'all' || categoryFilter !== 'all' 
                       ? 'No tasks match your filters' 
                       : 'No tasks yet'}
                   </h3>
-                  <p className="text-slate-600 text-lg max-w-md mx-auto">
+                  <p className="text-slate-600 dark:text-slate-300 text-lg max-w-md mx-auto">
                     {searchTerm || priorityFilter !== null || dateFilter !== 'all' || categoryFilter !== 'all'
                       ? 'Try adjusting your search or filters to see more tasks.'
                       : 'Start your productivity journey by creating your first task!'
