@@ -184,7 +184,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   // Check if user is authenticated on mount
   useEffect(() => {
+    console.log('AuthProvider: useEffect triggered - token:', token ? 'exists' : 'null');
+    
     const checkAuth = async () => {
+      console.log('AuthProvider: Starting auth check...');
+      console.log('AuthProvider: Token from state:', token ? `${token.substring(0, 20)}...` : 'null');
+      console.log('AuthProvider: Token from localStorage:', localStorage.getItem('access_token') ? `${localStorage.getItem('access_token')?.substring(0, 20)}...` : 'null');
+      console.log('AuthProvider: Refresh token from localStorage:', localStorage.getItem('refresh_token') ? `${localStorage.getItem('refresh_token')?.substring(0, 20)}...` : 'null');
+      
       if (token) {
         try {
           console.log('Checking authentication with token...');
@@ -212,11 +219,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                 localStorage.setItem('access_token', access_token);
                 localStorage.setItem('refresh_token', refresh_token);
                 setToken(access_token);
+                axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
                 
-                // Try to get user info again
-                const userResponse = await axios.get('/api/auth/me');
-                setUser(userResponse.data);
-                return;
+                // Retry the auth check with new token
+                const retryResponse = await axios.get('/api/auth/me');
+                setUser(retryResponse.data);
               } catch (refreshError: any) {
                 console.error('Token refresh failed:', refreshError);
                 console.error('Refresh error response:', refreshError.response?.data);
@@ -228,27 +235,27 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                 if (refreshError.response?.status === 401) {
                   console.log('Refresh token expired, clearing session...');
                   logout();
-                  return;
+                } else {
+                  // For other refresh errors, just clear tokens
+                  console.log('Other refresh error, clearing tokens...');
+                  logout();
                 }
               }
             } else {
-              // No refresh token available
               console.log('No refresh token available, clearing session...');
               logout();
-              return;
             }
-          }
-          
-          // For other errors, don't logout immediately
-          if (error.response?.status === 401) {
-            console.log('Authentication failed, but keeping user logged in for now...');
-            // Don't logout immediately, let the global interceptor handle it
           } else {
-            console.log('Other authentication error, clearing session...');
+            // For other errors, clear tokens
+            console.log('Other auth error, clearing session...');
             logout();
           }
         }
+      } else {
+        console.log('AuthProvider: No token available, skipping auth check');
       }
+      
+      console.log('AuthProvider: Auth check completed, setting loading to false');
       setIsLoading(false);
     };
 
