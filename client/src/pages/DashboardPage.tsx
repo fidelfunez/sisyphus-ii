@@ -30,6 +30,15 @@ interface Task {
 
 type TabType = 'tasks' | 'analytics' | 'export';
 
+const getInitialTheme = () => {
+  if (typeof window !== 'undefined') {
+    const stored = localStorage.getItem('theme');
+    if (stored === 'dark' || stored === 'light') return stored;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+  return 'light';
+};
+
 const DashboardPage: React.FC = () => {
   const { user, logout } = useAuth();
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -50,25 +59,18 @@ const DashboardPage: React.FC = () => {
   const [selectedTasks, setSelectedTasks] = useState<number[]>([]);
   const [showBulkOperations, setShowBulkOperations] = useState(false);
 
-  const [isDarkMode, setIsDarkMode] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('theme');
-      if (stored) return stored === 'dark';
-      return window.matchMedia('(prefers-color-scheme: dark)').matches;
-    }
-    return false;
-  });
+  const [theme, setTheme] = useState(getInitialTheme);
 
   useEffect(() => {
     const html = document.documentElement;
-    if (isDarkMode) {
+    if (theme === 'dark') {
       html.classList.add('dark');
       localStorage.setItem('theme', 'dark');
     } else {
       html.classList.remove('dark');
       localStorage.setItem('theme', 'light');
     }
-  }, [isDarkMode]);
+  }, [theme]);
 
   useEffect(() => {
     fetchTasks();
@@ -378,11 +380,11 @@ const DashboardPage: React.FC = () => {
             
             <div className="flex items-center space-x-6">
               <button
-                onClick={() => setIsDarkMode(dm => !dm)}
+                onClick={() => setTheme(theme => theme === 'dark' ? 'light' : 'dark')}
                 className="p-3 text-slate-600 dark:text-yellow-300 hover:text-slate-900 dark:hover:text-yellow-400 hover:bg-slate-100 dark:hover:bg-gray-800 rounded-xl transition-all duration-200 group"
-                title={isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+                title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
               >
-                {isDarkMode ? <Sun size={20} className="transition-transform" /> : <Moon size={20} className="transition-transform" />}
+                {theme === 'dark' ? <Sun size={20} className="transition-transform" /> : <Moon size={20} className="transition-transform" />}
               </button>
               <div className="text-right">
                 <p className="text-sm font-medium text-slate-900 dark:text-white">
@@ -631,7 +633,7 @@ const DashboardPage: React.FC = () => {
       </main>
 
       {/* Beautiful Footer */}
-      <footer className="bg-white/60 backdrop-blur-xl border-t border-white/20 mt-16">
+      <footer className="bg-white/60 dark:bg-gray-900/80 backdrop-blur-xl border-t border-white/20 dark:border-gray-800 mt-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             {/* Brand Section */}
@@ -644,11 +646,11 @@ const DashboardPage: React.FC = () => {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-slate-900">Sisyphus II</h3>
-                  <p className="text-slate-600">Master your daily tasks</p>
+                  <h3 className="text-xl font-bold text-slate-900 dark:text-white">Sisyphus II</h3>
+                  <p className="text-slate-600 dark:text-slate-300">Master your daily tasks</p>
                 </div>
               </div>
-              <p className="text-slate-600 max-w-md">
+              <p className="text-slate-600 dark:text-slate-300 max-w-md">
                 Transform your productivity with our intuitive task management system. 
                 Built with modern technology and designed for efficiency.
               </p>
@@ -656,47 +658,47 @@ const DashboardPage: React.FC = () => {
 
             {/* Quick Stats */}
             <div>
-              <h4 className="text-lg font-semibold text-slate-900 mb-4">Your Progress</h4>
+              <h4 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Your Progress</h4>
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-600">Completion Rate</span>
-                  <span className="font-semibold text-green-600">{completionRate}%</span>
+                  <span className="text-slate-600 dark:text-slate-300">Completion Rate</span>
+                  <span className="font-semibold text-green-600 dark:text-green-300">{completionRate}%</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-600">Active Tasks</span>
-                  <span className="font-semibold text-blue-600">{pendingCount}</span>
+                  <span className="text-slate-600 dark:text-slate-300">Active Tasks</span>
+                  <span className="font-semibold text-blue-600 dark:text-blue-300">{pendingCount}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-600">Overdue Tasks</span>
-                  <span className="font-semibold text-red-600">{overdueCount}</span>
+                  <span className="text-slate-600 dark:text-slate-300">Overdue Tasks</span>
+                  <span className="font-semibold text-red-600 dark:text-red-300">{overdueCount}</span>
                 </div>
               </div>
             </div>
 
             {/* Quick Actions */}
             <div>
-              <h4 className="text-lg font-semibold text-slate-900 mb-4">Quick Actions</h4>
+              <h4 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Quick Actions</h4>
               <div className="space-y-3">
                 <button
                   onClick={() => {
                     setActiveTab('tasks');
                     setShowTaskForm(true);
                   }}
-                  className="w-full text-left px-4 py-2 text-slate-600 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-200 flex items-center space-x-2"
+                  className="w-full text-left px-4 py-2 text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/40 rounded-xl transition-all duration-200 flex items-center space-x-2"
                 >
                   <Plus size={16} />
                   <span>Add New Task</span>
                 </button>
                 <button
                   onClick={() => setActiveTab('analytics')}
-                  className="w-full text-left px-4 py-2 text-slate-600 hover:text-purple-600 hover:bg-purple-50 rounded-xl transition-all duration-200 flex items-center space-x-2"
+                  className="w-full text-left px-4 py-2 text-slate-600 dark:text-slate-300 hover:text-purple-600 dark:hover:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/40 rounded-xl transition-all duration-200 flex items-center space-x-2"
                 >
                   <BarChart3 size={16} />
                   <span>View Analytics</span>
                 </button>
                 <button
                   onClick={() => setActiveTab('export')}
-                  className="w-full text-left px-4 py-2 text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all duration-200 flex items-center space-x-2"
+                  className="w-full text-left px-4 py-2 text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/40 rounded-xl transition-all duration-200 flex items-center space-x-2"
                 >
                   <Download size={16} />
                   <span>Export Tasks</span>
@@ -706,30 +708,30 @@ const DashboardPage: React.FC = () => {
           </div>
 
           {/* Bottom Bar */}
-          <div className="border-t border-slate-200 mt-8 pt-8 flex flex-col md:flex-row items-start justify-between">
+          <div className="border-t border-slate-200 dark:border-gray-800 mt-8 pt-8 flex flex-col md:flex-row items-start justify-between">
             <div className="flex-1">
-              <p className="text-slate-500 text-sm mb-2">
+              <p className="text-slate-500 dark:text-slate-400 text-sm mb-2">
                 © 2025 Sisyphus II. Built with 🧡 for productivity.
               </p>
-              <p className="text-slate-400 text-xs leading-relaxed max-w-xl mb-1">
+              <p className="text-slate-400 dark:text-slate-500 text-xs leading-relaxed max-w-xl mb-1">
                 Sisyphus II was built between Roatán, Honduras 🇭🇳 and The Woodlands, Texas&nbsp;🇺🇸.
               </p>
-              <p className="text-slate-400 text-xs leading-relaxed max-w-2xl">
+              <p className="text-slate-400 dark:text-slate-500 text-xs leading-relaxed max-w-2xl">
                 Dedicated to the people of Honduras, to the builders rising from unlikely places, and to a freer world. ₿
               </p>
             </div>
             <div className="flex flex-col items-end mt-4 md:mt-0 md:ml-8">
               <div className="flex items-center space-x-6 mb-2">
-                <span className="text-slate-400 text-sm">React + FastAPI + PostgreSQL</span>
+                <span className="text-slate-400 dark:text-slate-500 text-sm">React + FastAPI + PostgreSQL</span>
                 <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                  <span className="text-green-600 text-sm font-medium">Live</span>
+                  <div className="w-2 h-2 bg-green-500 dark:bg-green-400 rounded-full animate-pulse"></div>
+                  <span className="text-green-600 dark:text-green-300 text-sm font-medium">Live</span>
                 </div>
               </div>
-              <p className="text-slate-400 text-xs text-right leading-relaxed max-w-xs">
+              <p className="text-slate-400 dark:text-slate-500 text-xs text-right leading-relaxed max-w-xs">
                 Fidel Fúnez C. — Sovereign Builder
               </p>
-              <p className="text-slate-400 text-xs text-right leading-relaxed max-w-xs">
+              <p className="text-slate-400 dark:text-slate-500 text-xs text-right leading-relaxed max-w-xs">
                 Independent Dev, and relentless Bitcoiner.
               </p>
             </div>
