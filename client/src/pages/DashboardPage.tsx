@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { Plus, LogOut, Target, BarChart3, Download, Circle, CheckCircle, Zap, Calendar, Users, Tag } from 'lucide-react';
 import axios from 'axios';
@@ -8,6 +8,7 @@ import SearchAndFilters from '../components/SearchAndFilters';
 import BulkOperations from '../components/BulkOperations';
 import TaskAnalytics from '../components/TaskAnalytics';
 import ExportImport from '../components/ExportImport';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 // Set the base URL for all API requests based on environment
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
@@ -128,59 +129,113 @@ const DashboardPage: React.FC = () => {
     }
   };
 
-  const handleEditTask = (task: Task) => {
+  const handleEditTask = useCallback((task: Task) => {
     setEditingTask(task);
-  };
+  }, []);
 
-  const toggleTask = async (taskId: number) => {
+  const toggleTask = useCallback(async (taskId: number) => {
+    // Find the current task
+    const currentTask = tasks.find(task => task.id === taskId);
+    if (!currentTask) return;
+
+    // Optimistic update - immediately update the UI
+    const optimisticTask = {
+      ...currentTask,
+      is_completed: !currentTask.is_completed,
+      completed_at: !currentTask.is_completed ? new Date().toISOString() : null
+    };
+
+    // Update UI immediately
+    setTasks(prev => prev.map(task => 
+      task.id === taskId ? optimisticTask : task
+    ));
+
     try {
+      // Make the API call in the background
       const response = await axios.post(`/api/tasks/${taskId}/toggle`);
+      
+      // Update with the actual server response
       setTasks(prev => prev.map(task => 
         task.id === taskId ? response.data : task
       ));
     } catch (error) {
       console.error('Failed to toggle task:', error);
+      
+      // Revert the optimistic update on error
+      setTasks(prev => prev.map(task => 
+        task.id === taskId ? currentTask : task
+      ));
+      
+      // Show error to user (you can add a toast notification here)
+      alert('Failed to update task. Please try again.');
     }
-  };
+  }, [tasks]);
 
-  const deleteTask = async (taskId: number) => {
+  const deleteTask = useCallback(async (taskId: number) => {
     try {
       await axios.delete(`/api/tasks/${taskId}`);
       setTasks(prev => prev.filter(task => task.id !== taskId));
     } catch (error) {
       console.error('Failed to delete task:', error);
     }
-  };
+  }, []);
 
   // Bulk operations
   const handleBulkDelete = async (taskIds: number[]) => {
+    // Optimistic update - immediately remove tasks from UI
+    const tasksToDelete = tasks.filter(task => taskIds.includes(task.id));
+    setTasks(prev => prev.filter(task => !taskIds.includes(task.id)));
+
     try {
       await Promise.all(taskIds.map(id => axios.delete(`/api/tasks/${id}`)));
-      setTasks(prev => prev.filter(task => !taskIds.includes(task.id)));
     } catch (error) {
       console.error('Failed to bulk delete tasks:', error);
+      
+      // Revert optimistic update on error
+      setTasks(prev => [...prev, ...tasksToDelete]);
+      alert('Failed to delete some tasks. Please try again.');
     }
   };
 
   const handleBulkComplete = async (taskIds: number[]) => {
+    // Optimistic update - immediately mark tasks as completed
+    const tasksToUpdate = tasks.filter(task => taskIds.includes(task.id));
+    setTasks(prev => prev.map(task => 
+      taskIds.includes(task.id) ? { ...task, is_completed: true, completed_at: new Date().toISOString() } : task
+    ));
+
     try {
       await Promise.all(taskIds.map(id => axios.post(`/api/tasks/${id}/toggle`)));
-      setTasks(prev => prev.map(task => 
-        taskIds.includes(task.id) ? { ...task, is_completed: true, completed_at: new Date().toISOString().split('T')[0] } : task
-      ));
     } catch (error) {
       console.error('Failed to bulk complete tasks:', error);
+      
+      // Revert optimistic update on error
+      setTasks(prev => prev.map(task => {
+        const originalTask = tasksToUpdate.find(t => t.id === task.id);
+        return originalTask ? originalTask : task;
+      }));
+      alert('Failed to complete some tasks. Please try again.');
     }
   };
 
   const handleBulkPriorityChange = async (taskIds: number[], priority: number) => {
+    // Optimistic update - immediately update priority
+    const tasksToUpdate = tasks.filter(task => taskIds.includes(task.id));
+    setTasks(prev => prev.map(task => 
+      taskIds.includes(task.id) ? { ...task, priority } : task
+    ));
+
     try {
       await Promise.all(taskIds.map(id => axios.put(`/api/tasks/${id}`, { priority })));
-      setTasks(prev => prev.map(task => 
-        taskIds.includes(task.id) ? { ...task, priority } : task
-      ));
     } catch (error) {
       console.error('Failed to bulk change priority:', error);
+      
+      // Revert optimistic update on error
+      setTasks(prev => prev.map(task => {
+        const originalTask = tasksToUpdate.find(t => t.id === task.id);
+        return originalTask ? originalTask : task;
+      }));
+      alert('Failed to update priority for some tasks. Please try again.');
     }
   };
 
@@ -198,54 +253,56 @@ const DashboardPage: React.FC = () => {
   };
 
   // Filter tasks based on search and filters
-  const filteredTasks = tasks.filter(task => {
-    // Search filter
-    if (searchTerm) {
-      const searchLower = searchTerm.toLowerCase();
-      const matchesSearch = 
-        task.title.toLowerCase().includes(searchLower) ||
-        (task.description && task.description.toLowerCase().includes(searchLower)) ||
-        (task.category && task.category.toLowerCase().includes(searchLower));
-      if (!matchesSearch) return false;
-    }
-
-    // Completion filter
-    if (!showCompleted && task.is_completed) return false;
-
-    // Priority filter
-    if (priorityFilter !== null && task.priority !== priorityFilter) return false;
-
-    // Category filter
-    if (categoryFilter !== 'all') {
-      if (categoryFilter === 'uncategorized' && task.category) return false;
-      if (categoryFilter !== 'uncategorized' && task.category !== categoryFilter) return false;
-    }
-
-    // Date filter
-    if (dateFilter !== 'all' && task.due_date) {
-      const today = new Date();
-      const due = new Date(task.due_date);
-      const diffTime = due.getTime() - today.getTime();
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-      switch (dateFilter) {
-        case 'today':
-          if (diffDays !== 0) return false;
-          break;
-        case 'tomorrow':
-          if (diffDays !== 1) return false;
-          break;
-        case 'this_week':
-          if (diffDays < 0 || diffDays > 7) return false;
-          break;
-        case 'overdue':
-          if (diffDays >= 0) return false;
-          break;
+  const filteredTasks = useMemo(() => {
+    return tasks.filter(task => {
+      // Search filter
+      if (searchTerm) {
+        const searchLower = searchTerm.toLowerCase();
+        const matchesSearch = 
+          task.title.toLowerCase().includes(searchLower) ||
+          (task.description && task.description.toLowerCase().includes(searchLower)) ||
+          (task.category && task.category.toLowerCase().includes(searchLower));
+        if (!matchesSearch) return false;
       }
-    }
 
-    return true;
-  });
+      // Completion filter
+      if (!showCompleted && task.is_completed) return false;
+
+      // Priority filter
+      if (priorityFilter !== null && task.priority !== priorityFilter) return false;
+
+      // Category filter
+      if (categoryFilter !== 'all') {
+        if (categoryFilter === 'uncategorized' && task.category) return false;
+        if (categoryFilter !== 'uncategorized' && task.category !== categoryFilter) return false;
+      }
+
+      // Date filter
+      if (dateFilter !== 'all' && task.due_date) {
+        const today = new Date();
+        const due = new Date(task.due_date);
+        const diffTime = due.getTime() - today.getTime();
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+        switch (dateFilter) {
+          case 'today':
+            if (diffDays !== 0) return false;
+            break;
+          case 'tomorrow':
+            if (diffDays !== 1) return false;
+            break;
+          case 'this_week':
+            if (diffDays < 0 || diffDays > 7) return false;
+            break;
+          case 'overdue':
+            if (diffDays >= 0) return false;
+            break;
+        }
+      }
+
+      return true;
+    });
+  }, [tasks, searchTerm, showCompleted, priorityFilter, categoryFilter, dateFilter]);
 
   const completedCount = tasks.filter(task => task.is_completed).length;
   const pendingCount = tasks.filter(task => !task.is_completed).length;

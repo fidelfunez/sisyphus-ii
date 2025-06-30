@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { CheckCircle, Circle, Trash2, Clock, Calendar, Tag, AlertTriangle, Edit } from 'lucide-react';
 
 interface Task {
@@ -22,7 +22,7 @@ interface TaskItemProps {
   onEdit: () => void;
 }
 
-const TaskItem: React.FC<TaskItemProps> = ({ task, onToggle, onDelete, onEdit }) => {
+const TaskItem: React.FC<TaskItemProps> = React.memo(({ task, onToggle, onDelete, onEdit }) => {
   const priorityColors = {
     1: { bg: 'bg-green-100', text: 'text-green-700', border: 'border-green-200', icon: 'bg-green-500' },
     2: { bg: 'bg-yellow-100', text: 'text-yellow-700', border: 'border-yellow-200', icon: 'bg-yellow-500' },
@@ -35,72 +35,78 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onToggle, onDelete, onEdit })
     3: 'High'
   };
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffTime = Math.abs(now.getTime() - date.getTime());
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
-    if (diffDays === 1) return 'Today';
-    if (diffDays === 2) return 'Yesterday';
-    if (diffDays <= 7) return `${diffDays - 1} days ago`;
-    return date.toLocaleDateString();
-  };
+  // Memoize expensive date calculations
+  const { formatDate, dueStatus, dueText } = useMemo(() => {
+    const formatDate = (dateString: string) => {
+      const date = new Date(dateString);
+      const now = new Date();
+      const diffTime = Math.abs(now.getTime() - date.getTime());
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      
+      if (diffDays === 1) return 'Today';
+      if (diffDays === 2) return 'Yesterday';
+      if (diffDays <= 7) return `${diffDays - 1} days ago`;
+      return date.toLocaleDateString();
+    };
 
-  const getDueDateStatus = (dueDate: string | null) => {
-    if (!dueDate) return { status: 'no_due_date', color: 'text-slate-500', bg: 'bg-slate-100' };
-    
-    const today = new Date();
-    const due = new Date(dueDate);
-    const diffTime = due.getTime() - today.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
-    if (diffDays < 0) {
-      return { status: 'overdue', color: 'text-red-600', bg: 'bg-red-100' };
-    } else if (diffDays === 0) {
-      return { status: 'due_today', color: 'text-orange-600', bg: 'bg-orange-100' };
-    } else if (diffDays === 1) {
-      return { status: 'due_tomorrow', color: 'text-yellow-600', bg: 'bg-yellow-100' };
-    } else if (diffDays <= 7) {
-      return { status: 'due_soon', color: 'text-blue-600', bg: 'bg-blue-100' };
-    } else {
-      return { status: 'due_later', color: 'text-green-600', bg: 'bg-green-100' };
-    }
-  };
+    const getDueDateStatus = (dueDate: string | null) => {
+      if (!dueDate) return { status: 'no_due_date', color: 'text-slate-500', bg: 'bg-slate-100' };
+      
+      const today = new Date();
+      const due = new Date(dueDate);
+      const diffTime = due.getTime() - today.getTime();
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      
+      if (diffDays < 0) {
+        return { status: 'overdue', color: 'text-red-600', bg: 'bg-red-100' };
+      } else if (diffDays === 0) {
+        return { status: 'due_today', color: 'text-orange-600', bg: 'bg-orange-100' };
+      } else if (diffDays === 1) {
+        return { status: 'due_tomorrow', color: 'text-yellow-600', bg: 'bg-yellow-100' };
+      } else if (diffDays <= 7) {
+        return { status: 'due_soon', color: 'text-blue-600', bg: 'bg-blue-100' };
+      } else {
+        return { status: 'due_later', color: 'text-green-600', bg: 'bg-green-100' };
+      }
+    };
 
-  const getDueDateText = (dueDate: string | null) => {
-    if (!dueDate) return null;
-    
-    const today = new Date();
-    const due = new Date(dueDate);
-    const diffTime = due.getTime() - today.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
-    if (diffDays < 0) {
-      return `${Math.abs(diffDays)} day${Math.abs(diffDays) !== 1 ? 's' : ''} overdue`;
-    } else if (diffDays === 0) {
-      return 'Due today';
-    } else if (diffDays === 1) {
-      return 'Due tomorrow';
-    } else if (diffDays <= 7) {
-      return `Due in ${diffDays} days`;
-    } else {
-      return `Due on ${due.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
-    }
-  };
+    const getDueDateText = (dueDate: string | null) => {
+      if (!dueDate) return null;
+      
+      const today = new Date();
+      const due = new Date(dueDate);
+      const diffTime = due.getTime() - today.getTime();
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      
+      if (diffDays < 0) {
+        return `${Math.abs(diffDays)} day${Math.abs(diffDays) !== 1 ? 's' : ''} overdue`;
+      } else if (diffDays === 0) {
+        return 'Due today';
+      } else if (diffDays === 1) {
+        return 'Due tomorrow';
+      } else if (diffDays <= 7) {
+        return `Due in ${diffDays} days`;
+      } else {
+        return `Due on ${due.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
+      }
+    };
 
-  const dueStatus = getDueDateStatus(task.due_date);
-  const dueText = getDueDateText(task.due_date);
+    return {
+      formatDate,
+      dueStatus: getDueDateStatus(task.due_date),
+      dueText: getDueDateText(task.due_date)
+    };
+  }, [task.due_date, task.created_at, task.updated_at, task.completed_at]);
 
   return (
-    <div className={`bg-white/80 backdrop-blur-xl rounded-3xl p-6 shadow-xl border border-white/20 hover:shadow-2xl transition-all duration-300 group ${
+    <div className={`bg-white/80 backdrop-blur-xl rounded-3xl p-6 shadow-xl border border-white/20 hover:shadow-2xl transition-all duration-200 ease-out group ${
       task.is_completed ? 'opacity-75' : ''
     }`}>
       <div className="flex items-start space-x-4">
         {/* Enhanced Toggle Button */}
         <button
           onClick={onToggle}
-          className={`flex-shrink-0 w-8 h-8 rounded-2xl flex items-center justify-center transition-all duration-200 hover:scale-110 ${
+          className={`flex-shrink-0 w-8 h-8 rounded-2xl flex items-center justify-center transition-all duration-150 ease-out hover:scale-105 ${
             task.is_completed
               ? 'bg-gradient-to-br from-green-500 to-emerald-600 text-white shadow-lg'
               : 'bg-white/70 border-2 border-slate-200 text-slate-400 hover:border-blue-300 hover:text-blue-500'
@@ -117,14 +123,14 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onToggle, onDelete, onEdit })
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between">
             <div className="flex-1 min-w-0">
-              <h3 className={`text-lg font-semibold text-slate-900 mb-2 transition-all duration-200 ${
+              <h3 className={`text-lg font-semibold text-slate-900 mb-2 transition-colors duration-200 ${
                 task.is_completed ? 'line-through text-slate-500' : ''
               }`}>
                 {task.title}
               </h3>
               
               {task.description && (
-                <p className={`text-slate-600 mb-4 line-clamp-2 transition-all duration-200 ${
+                <p className={`text-slate-600 mb-4 line-clamp-2 transition-colors duration-200 ${
                   task.is_completed ? 'line-through text-slate-400' : ''
                 }`}>
                   {task.description}
@@ -201,17 +207,17 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onToggle, onDelete, onEdit })
             <div className="flex items-center space-x-2 ml-4">
               <button
                 onClick={onEdit}
-                className="p-2 text-slate-400 hover:text-blue-500 hover:bg-blue-50 rounded-xl transition-all duration-200 group/edit"
+                className="p-2 text-slate-400 hover:text-blue-500 hover:bg-blue-50 rounded-xl transition-all duration-150 ease-out group/edit"
                 title="Edit task"
               >
-                <Edit size={18} className="group-hover/edit:scale-110 transition-transform" />
+                <Edit size={18} className="group-hover/edit:scale-105 transition-transform duration-150" />
               </button>
               <button
                 onClick={onDelete}
-                className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all duration-200 group/delete"
+                className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all duration-150 ease-out group/delete"
                 title="Delete task"
               >
-                <Trash2 size={18} className="group-hover/delete:scale-110 transition-transform" />
+                <Trash2 size={18} className="group-hover/delete:scale-105 transition-transform duration-150" />
               </button>
             </div>
           </div>
@@ -239,6 +245,8 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onToggle, onDelete, onEdit })
       )}
     </div>
   );
-};
+});
+
+TaskItem.displayName = 'TaskItem';
 
 export default TaskItem; 
