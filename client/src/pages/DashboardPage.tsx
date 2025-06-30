@@ -133,41 +133,45 @@ const DashboardPage: React.FC = () => {
   }, []);
 
   const toggleTask = useCallback(async (taskId: number) => {
-    // Find the current task
-    const currentTask = tasks.find(task => task.id === taskId);
-    if (!currentTask) return;
+    // Use functional state update to get current tasks
+    setTasks(prevTasks => {
+      const currentTask = prevTasks.find(task => task.id === taskId);
+      if (!currentTask) return prevTasks;
 
-    // Optimistic update - immediately update the UI
-    const optimisticTask = {
-      ...currentTask,
-      is_completed: !currentTask.is_completed,
-      completed_at: !currentTask.is_completed ? new Date().toISOString() : null
-    };
+      // Optimistic update - immediately update the UI
+      const optimisticTask = {
+        ...currentTask,
+        is_completed: !currentTask.is_completed,
+        completed_at: !currentTask.is_completed ? new Date().toISOString() : null
+      };
 
-    // Update UI immediately
-    setTasks(prev => prev.map(task => 
-      task.id === taskId ? optimisticTask : task
-    ));
+      // Update UI immediately
+      const updatedTasks = prevTasks.map(task => 
+        task.id === taskId ? optimisticTask : task
+      );
 
-    try {
       // Make the API call in the background
-      const response = await axios.post(`/api/tasks/${taskId}/toggle`);
-      
-      // Update with the actual server response
-      setTasks(prev => prev.map(task => 
-        task.id === taskId ? response.data : task
-      ));
-    } catch (error) {
-      console.error('Failed to toggle task:', error);
-      
-      // Revert the optimistic update on error
-      setTasks(prev => prev.map(task => 
-        task.id === taskId ? currentTask : task
-      ));
-      
-      // Show error to user (you can add a toast notification here)
-      alert('Failed to update task. Please try again.');
-    }
+      axios.post(`/api/tasks/${taskId}/toggle`)
+        .then(response => {
+          // Update with the actual server response
+          setTasks(prev => prev.map(task => 
+            task.id === taskId ? response.data : task
+          ));
+        })
+        .catch(error => {
+          console.error('Failed to toggle task:', error);
+          
+          // Revert the optimistic update on error
+          setTasks(prev => prev.map(task => 
+            task.id === taskId ? currentTask : task
+          ));
+          
+          // Show error to user (you can add a toast notification here)
+          alert('Failed to update task. Please try again.');
+        });
+
+      return updatedTasks;
+    });
   }, []);
 
   const deleteTask = useCallback(async (taskId: number) => {
@@ -180,63 +184,75 @@ const DashboardPage: React.FC = () => {
   }, []);
 
   // Bulk operations
-  const handleBulkDelete = async (taskIds: number[]) => {
+  const handleBulkDelete = useCallback(async (taskIds: number[]) => {
     // Optimistic update - immediately remove tasks from UI
-    const tasksToDelete = tasks.filter(task => taskIds.includes(task.id));
-    setTasks(prev => prev.filter(task => !taskIds.includes(task.id)));
+    setTasks(prevTasks => {
+      const tasksToDelete = prevTasks.filter(task => taskIds.includes(task.id));
+      const updatedTasks = prevTasks.filter(task => !taskIds.includes(task.id));
 
-    try {
-      await Promise.all(taskIds.map(id => axios.delete(`/api/tasks/${id}`)));
-    } catch (error) {
-      console.error('Failed to bulk delete tasks:', error);
-      
-      // Revert optimistic update on error
-      setTasks(prev => [...prev, ...tasksToDelete]);
-      alert('Failed to delete some tasks. Please try again.');
-    }
-  };
+      // Make API calls in the background
+      Promise.all(taskIds.map(id => axios.delete(`/api/tasks/${id}`)))
+        .catch(error => {
+          console.error('Failed to bulk delete tasks:', error);
+          
+          // Revert optimistic update on error
+          setTasks(prev => [...prev, ...tasksToDelete]);
+          alert('Failed to delete some tasks. Please try again.');
+        });
 
-  const handleBulkComplete = async (taskIds: number[]) => {
+      return updatedTasks;
+    });
+  }, []);
+
+  const handleBulkComplete = useCallback(async (taskIds: number[]) => {
     // Optimistic update - immediately mark tasks as completed
-    const tasksToUpdate = tasks.filter(task => taskIds.includes(task.id));
-    setTasks(prev => prev.map(task => 
-      taskIds.includes(task.id) ? { ...task, is_completed: true, completed_at: new Date().toISOString() } : task
-    ));
+    setTasks(prevTasks => {
+      const tasksToUpdate = prevTasks.filter(task => taskIds.includes(task.id));
+      const updatedTasks = prevTasks.map(task => 
+        taskIds.includes(task.id) ? { ...task, is_completed: true, completed_at: new Date().toISOString() } : task
+      );
 
-    try {
-      await Promise.all(taskIds.map(id => axios.post(`/api/tasks/${id}/toggle`)));
-    } catch (error) {
-      console.error('Failed to bulk complete tasks:', error);
-      
-      // Revert optimistic update on error
-      setTasks(prev => prev.map(task => {
-        const originalTask = tasksToUpdate.find(t => t.id === task.id);
-        return originalTask ? originalTask : task;
-      }));
-      alert('Failed to complete some tasks. Please try again.');
-    }
-  };
+      // Make API calls in the background
+      Promise.all(taskIds.map(id => axios.post(`/api/tasks/${id}/toggle`)))
+        .catch(error => {
+          console.error('Failed to bulk complete tasks:', error);
+          
+          // Revert optimistic update on error
+          setTasks(prev => prev.map(task => {
+            const originalTask = tasksToUpdate.find(t => t.id === task.id);
+            return originalTask ? originalTask : task;
+          }));
+          alert('Failed to complete some tasks. Please try again.');
+        });
 
-  const handleBulkPriorityChange = async (taskIds: number[], priority: number) => {
+      return updatedTasks;
+    });
+  }, []);
+
+  const handleBulkPriorityChange = useCallback(async (taskIds: number[], priority: number) => {
     // Optimistic update - immediately update priority
-    const tasksToUpdate = tasks.filter(task => taskIds.includes(task.id));
-    setTasks(prev => prev.map(task => 
-      taskIds.includes(task.id) ? { ...task, priority } : task
-    ));
+    setTasks(prevTasks => {
+      const tasksToUpdate = prevTasks.filter(task => taskIds.includes(task.id));
+      const updatedTasks = prevTasks.map(task => 
+        taskIds.includes(task.id) ? { ...task, priority } : task
+      );
 
-    try {
-      await Promise.all(taskIds.map(id => axios.put(`/api/tasks/${id}`, { priority })));
-    } catch (error) {
-      console.error('Failed to bulk change priority:', error);
-      
-      // Revert optimistic update on error
-      setTasks(prev => prev.map(task => {
-        const originalTask = tasksToUpdate.find(t => t.id === task.id);
-        return originalTask ? originalTask : task;
-      }));
-      alert('Failed to update priority for some tasks. Please try again.');
-    }
-  };
+      // Make API calls in the background
+      Promise.all(taskIds.map(id => axios.put(`/api/tasks/${id}`, { priority })))
+        .catch(error => {
+          console.error('Failed to bulk change priority:', error);
+          
+          // Revert optimistic update on error
+          setTasks(prev => prev.map(task => {
+            const originalTask = tasksToUpdate.find(t => t.id === task.id);
+            return originalTask ? originalTask : task;
+          }));
+          alert('Failed to update priority for some tasks. Please try again.');
+        });
+
+      return updatedTasks;
+    });
+  }, []);
 
   // Import tasks
   const handleImportTasks = async (importedTasks: Omit<Task, 'id' | 'user_id' | 'created_at' | 'updated_at'>[]) => {
