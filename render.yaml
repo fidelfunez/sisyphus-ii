@@ -3,7 +3,7 @@ services:
   - type: web
     name: sisyphus-backend
     env: python
-    plan: starter
+    plan: free
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn main:app -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT
     envVars:
@@ -30,7 +30,7 @@ services:
   - type: web
     name: sisyphus-frontend
     env: static
-    plan: starter
+    plan: free
     buildCommand: npm install && npm run build
     staticPublishPath: ./dist
     envVars:
@@ -41,4 +41,4 @@ databases:
   - name: sisyphus-db
     databaseName: sisyphus_db
     user: sisyphus_user
-    plan: starter 
+    plan: free 
