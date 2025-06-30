@@ -61,7 +61,7 @@ const DashboardPage: React.FC = () => {
 
   const [theme, setTheme] = useState(getPreferredTheme);
 
-Successfully imported 5 tasks!  useEffect(() => {
+  useEffect(() => {
     const html = document.documentElement;
     if (theme === 'dark') {
       html.classList.add('dark');
