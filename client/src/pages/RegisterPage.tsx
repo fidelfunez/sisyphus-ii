@@ -129,7 +129,7 @@ const RegisterPage: React.FC = () => {
       <div className="relative z-10 flex-1 flex items-center justify-center p-2 w-full h-full">
         <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch h-full">
           {/* Left Side - Benefits & Branding (Hidden on mobile) */}
-          <div className="hidden md:flex flex-col justify-center h-full w-full max-w-xl bg-gradient-to-br from-blue-50 via-purple-50 to-indigo-50 rounded-2xl shadow-xl p-4 relative overflow-hidden flex-1">
+          <div className="hidden md:flex flex-col justify-center h-full w-full max-w-xl bg-gradient-to-br from-blue-50 via-purple-50 to-indigo-50 dark:from-gray-800 dark:via-gray-900 dark:to-gray-800 rounded-2xl shadow-xl p-4 relative overflow-hidden flex-1">
             {/* Brand Section */}
             <div className="flex flex-col items-center pt-1 pb-3 mb-3">
               <div className="w-12 h-12 bg-gradient-to-br from-blue-500 via-purple-600 to-indigo-600 rounded-2xl mb-2 flex items-center justify-center shadow-xl relative overflow-hidden">
@@ -139,8 +139,8 @@ const RegisterPage: React.FC = () => {
                   <path d="M9 16L12 12L15 16" stroke="#fbbf24" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </div>
-              <h1 className="text-2xl font-bold text-slate-900 mb-1">Join Sisyphus</h1>
-              <p className="text-slate-700 text-sm mb-0">Create your account and start your productivity journey</p>
+              <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-1">Join Sisyphus</h1>
+              <p className="text-slate-700 dark:text-slate-300 text-sm mb-0">Create your account and start your productivity journey</p>
             </div>
 
             {/* Benefits Section */}
@@ -152,15 +152,15 @@ const RegisterPage: React.FC = () => {
                   return (
                     <div 
                       key={index}
-                      className="group bg-white/60 backdrop-blur-xl rounded-lg p-2 border border-white/20 hover:bg-white/80 hover:shadow-lg transition-all duration-300 hover:scale-105"
+                      className="group bg-white/60 dark:bg-gray-700/60 backdrop-blur-xl rounded-lg p-2 border border-white/20 dark:border-gray-600/20 hover:bg-white/80 dark:hover:bg-gray-700/80 hover:shadow-lg transition-all duration-300 hover:scale-105"
                     >
                       <div className="flex items-start space-x-2">
                         <div className="w-6 h-6 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                           <Icon className="w-3 h-3 text-white" />
                         </div>
                         <div>
-                          <h3 className="text-xs font-semibold text-slate-900 mb-0.5">{benefit.title}</h3>
-                          <p className="text-[10px] text-slate-600">{benefit.description}</p>
+                          <h3 className="text-xs font-semibold text-slate-900 dark:text-white mb-0.5">{benefit.title}</h3>
+                          <p className="text-[10px] text-slate-600 dark:text-slate-300">{benefit.description}</p>
                         </div>
                       </div>
                     </div>
@@ -170,26 +170,26 @@ const RegisterPage: React.FC = () => {
 
               {/* Stats */}
               <div className="grid grid-cols-3 gap-2 mb-8">
-                <div className="bg-white/60 backdrop-blur-xl rounded-lg p-2 text-center border border-white/20">
-                  <div className="text-sm font-bold text-blue-600">Free</div>
-                  <div className="text-[10px] text-slate-600">Forever</div>
+                <div className="bg-white/60 dark:bg-gray-700/60 backdrop-blur-xl rounded-lg p-2 text-center border border-white/20 dark:border-gray-600/20">
+                  <div className="text-sm font-bold text-blue-600 dark:text-blue-400">Free</div>
+                  <div className="text-[10px] text-slate-600 dark:text-slate-300">Forever</div>
                 </div>
-                <div className="bg-white/60 backdrop-blur-xl rounded-lg p-2 text-center border border-white/20">
-                  <div className="text-sm font-bold text-purple-600">100%</div>
-                  <div className="text-[10px] text-slate-600">Secure</div>
+                <div className="bg-white/60 dark:bg-gray-700/60 backdrop-blur-xl rounded-lg p-2 text-center border border-white/20 dark:border-gray-600/20">
+                  <div className="text-sm font-bold text-purple-600 dark:text-purple-400">100%</div>
+                  <div className="text-[10px] text-slate-600 dark:text-slate-300">Secure</div>
                 </div>
-                <div className="bg-white/60 backdrop-blur-xl rounded-lg p-2 text-center border border-white/20">
-                  <div className="text-sm font-bold text-indigo-600">∞</div>
-                  <div className="text-[10px] text-slate-600">Tasks</div>
+                <div className="bg-white/60 dark:bg-gray-700/60 backdrop-blur-xl rounded-lg p-2 text-center border border-white/20 dark:border-gray-600/20">
+                  <div className="text-sm font-bold text-indigo-600 dark:text-indigo-400">∞</div>
+                  <div className="text-[10px] text-slate-600 dark:text-slate-300">Tasks</div>
                 </div>
               </div>
 
               {/* Inspirational Quote */}
               <div className="flex flex-col items-center justify-center mt-16">
-                <blockquote className="italic text-slate-500 text-center text-sm max-w-xs px-2">
+                <blockquote className="italic text-slate-500 dark:text-slate-400 text-center text-sm max-w-xs px-2">
                   "The impediment to action advances action. What stands in the way becomes the way."
                 </blockquote>
-                <span className="text-slate-400 text-xs mt-1">— Marcus Aurelius</span>
+                <span className="text-slate-400 dark:text-slate-500 text-xs mt-1">— Marcus Aurelius</span>
                 {/* Mountain Emoji */}
                 <div className="mt-6 flex justify-center">
                   <span className="text-6xl opacity-80">🏔️</span>
@@ -208,26 +208,26 @@ const RegisterPage: React.FC = () => {
                   <path d="M9 16L12 12L15 16" stroke="#fbbf24" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </div>
-              <h1 className="text-2xl font-bold text-slate-900 mb-1">Join Sisyphus</h1>
-              <p className="text-slate-600 text-sm">Create your account and start your journey</p>
+              <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-1">Join Sisyphus</h1>
+              <p className="text-slate-600 dark:text-slate-300 text-sm">Create your account and start your journey</p>
             </div>
 
             {/* Registration Form */}
-            <div className="bg-white/80 backdrop-blur-xl rounded-2xl p-3 shadow-xl border border-white/20 relative overflow-hidden">
+            <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl p-3 shadow-xl border border-white/20 dark:border-gray-700/20 relative overflow-hidden">
               {/* Decorative Elements */}
               <div className="absolute top-0 right-0 w-12 h-12 bg-gradient-to-br from-blue-400/10 to-purple-500/10 rounded-full blur-xl" />
               <div className="absolute bottom-0 left-0 w-10 h-10 bg-gradient-to-br from-purple-400/10 to-indigo-500/10 rounded-full blur-xl" />
               
               <div className="relative z-10">
                 <div className="text-center mb-3">
-                  <h2 className="text-lg font-bold text-slate-900 mb-1">Create Account</h2>
-                  <p className="text-slate-600 text-xs">Join our productivity community</p>
+                  <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-1">Create Account</h2>
+                  <p className="text-slate-600 dark:text-slate-300 text-xs">Join our productivity community</p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-3">
                   {/* Full Name Field */}
                   <div className="space-y-1">
-                    <label htmlFor="fullName" className="block text-sm font-semibold text-slate-700">
+                    <label htmlFor="fullName" className="block text-sm font-semibold text-slate-700 dark:text-slate-200">
                       Full Name
                     </label>
                     <div className="relative group">
@@ -239,11 +239,11 @@ const RegisterPage: React.FC = () => {
                         onChange={handleChange}
                         onFocus={() => setIsFocused('fullName')}
                         onBlur={() => setIsFocused(null)}
-                        className={`w-full px-3 py-2.5 bg-white/70 backdrop-blur-sm border-2 rounded-xl focus:outline-none transition-all duration-300 ${
+                        className={`w-full px-3 py-2.5 bg-white/70 dark:bg-gray-700/70 backdrop-blur-sm border-2 rounded-xl focus:outline-none transition-all duration-300 ${
                           isFocused === 'fullName'
                             ? 'border-blue-500 shadow-lg shadow-blue-500/20'
-                            : 'border-slate-200 hover:border-slate-300'
-                        }`}
+                            : 'border-slate-200 dark:border-gray-600 hover:border-slate-300 dark:hover:border-gray-500'
+                        } text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400`}
                         placeholder="Enter your full name"
                         required
                       />
@@ -255,7 +255,7 @@ const RegisterPage: React.FC = () => {
 
                   {/* Username Field */}
                   <div className="space-y-1">
-                    <label htmlFor="username" className="block text-sm font-semibold text-slate-700">
+                    <label htmlFor="username" className="block text-sm font-semibold text-slate-700 dark:text-slate-200">
                       Username
                     </label>
                     <div className="relative group">
@@ -267,11 +267,11 @@ const RegisterPage: React.FC = () => {
                         onChange={handleChange}
                         onFocus={() => setIsFocused('username')}
                         onBlur={() => setIsFocused(null)}
-                        className={`w-full px-3 py-2.5 bg-white/70 backdrop-blur-sm border-2 rounded-xl focus:outline-none transition-all duration-300 ${
+                        className={`w-full px-3 py-2.5 bg-white/70 dark:bg-gray-700/70 backdrop-blur-sm border-2 rounded-xl focus:outline-none transition-all duration-300 ${
                           isFocused === 'username'
                             ? 'border-blue-500 shadow-lg shadow-blue-500/20'
-                            : 'border-slate-200 hover:border-slate-300'
-                        }`}
+                            : 'border-slate-200 dark:border-gray-600 hover:border-slate-300 dark:hover:border-gray-500'
+                        } text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400`}
                         placeholder="Choose a username"
                         required
                       />
@@ -283,7 +283,7 @@ const RegisterPage: React.FC = () => {
 
                   {/* Email Field */}
                   <div className="space-y-1">
-                    <label htmlFor="email" className="block text-sm font-semibold text-slate-700">
+                    <label htmlFor="email" className="block text-sm font-semibold text-slate-700 dark:text-slate-200">
                       Email
                     </label>
                     <div className="relative group">
@@ -295,11 +295,11 @@ const RegisterPage: React.FC = () => {
                         onChange={handleChange}
                         onFocus={() => setIsFocused('email')}
                         onBlur={() => setIsFocused(null)}
-                        className={`w-full px-3 py-2.5 bg-white/70 backdrop-blur-sm border-2 rounded-xl focus:outline-none transition-all duration-300 ${
+                        className={`w-full px-3 py-2.5 bg-white/70 dark:bg-gray-700/70 backdrop-blur-sm border-2 rounded-xl focus:outline-none transition-all duration-300 ${
                           isFocused === 'email'
                             ? 'border-blue-500 shadow-lg shadow-blue-500/20'
-                            : 'border-slate-200 hover:border-slate-300'
-                        }`}
+                            : 'border-slate-200 dark:border-gray-600 hover:border-slate-300 dark:hover:border-gray-500'
+                        } text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400`}
                         placeholder="Enter your email"
                         required
                       />
@@ -311,7 +311,7 @@ const RegisterPage: React.FC = () => {
 
                   {/* Password Field */}
                   <div className="space-y-1">
-                    <label htmlFor="password" className="block text-sm font-semibold text-slate-700">
+                    <label htmlFor="password" className="block text-sm font-semibold text-slate-700 dark:text-slate-200">
                       Password
                     </label>
                     <div className="relative group">
@@ -323,18 +323,18 @@ const RegisterPage: React.FC = () => {
                         onChange={handleChange}
                         onFocus={() => setIsFocused('password')}
                         onBlur={() => setIsFocused(null)}
-                        className={`w-full px-3 py-2.5 pr-10 bg-white/70 backdrop-blur-sm border-2 rounded-xl focus:outline-none transition-all duration-300 ${
+                        className={`w-full px-3 py-2.5 pr-10 bg-white/70 dark:bg-gray-700/70 backdrop-blur-sm border-2 rounded-xl focus:outline-none transition-all duration-300 ${
                           isFocused === 'password'
                             ? 'border-blue-500 shadow-lg shadow-blue-500/20'
-                            : 'border-slate-200 hover:border-slate-300'
-                        }`}
+                            : 'border-slate-200 dark:border-gray-600 hover:border-slate-300 dark:hover:border-gray-500'
+                        } text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400`}
                         placeholder="Create a password"
                         required
                       />
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors p-1 hover:bg-slate-100 rounded-lg"
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors p-1 hover:bg-slate-100 dark:hover:bg-gray-600 rounded-lg"
                       >
                         {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                       </button>
@@ -342,12 +342,12 @@ const RegisterPage: React.FC = () => {
                         <div className="absolute inset-0 border-2 border-blue-500 rounded-xl animate-pulse" />
                       )}
                     </div>
-                    <p className="text-xs text-slate-500 mt-1">Password must be at least 8 characters long.</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Password must be at least 8 characters long.</p>
                   </div>
 
                   {/* Confirm Password Field */}
                   <div className="space-y-1">
-                    <label htmlFor="confirmPassword" className="block text-sm font-semibold text-slate-700">
+                    <label htmlFor="confirmPassword" className="block text-sm font-semibold text-slate-700 dark:text-slate-200">
                       Confirm Password
                     </label>
                     <div className="relative group">
@@ -359,18 +359,18 @@ const RegisterPage: React.FC = () => {
                         onChange={handleChange}
                         onFocus={() => setIsFocused('confirmPassword')}
                         onBlur={() => setIsFocused(null)}
-                        className={`w-full px-3 py-2.5 pr-10 bg-white/70 backdrop-blur-sm border-2 rounded-xl focus:outline-none transition-all duration-300 ${
+                        className={`w-full px-3 py-2.5 pr-10 bg-white/70 dark:bg-gray-700/70 backdrop-blur-sm border-2 rounded-xl focus:outline-none transition-all duration-300 ${
                           isFocused === 'confirmPassword'
                             ? 'border-blue-500 shadow-lg shadow-blue-500/20'
-                            : 'border-slate-200 hover:border-slate-300'
-                        }`}
+                            : 'border-slate-200 dark:border-gray-600 hover:border-slate-300 dark:hover:border-gray-500'
+                        } text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400`}
                         placeholder="Confirm your password"
                         required
                       />
                       <button
                         type="button"
                         onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors p-1 hover:bg-slate-100 rounded-lg"
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors p-1 hover:bg-slate-100 dark:hover:bg-gray-600 rounded-lg"
                       >
                         {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                       </button>
@@ -382,12 +382,12 @@ const RegisterPage: React.FC = () => {
 
                   {/* Error Message */}
                   {error && (
-                    <div className="bg-gradient-to-r from-red-50 to-pink-50 border border-red-200 rounded-xl p-3 animate-shake">
+                    <div className="bg-gradient-to-r from-red-50 to-pink-50 dark:from-red-900/20 dark:to-pink-900/20 border border-red-200 dark:border-red-800 rounded-xl p-3 animate-shake">
                       <div className="flex items-center space-x-2">
-                        <div className="w-6 h-6 bg-red-100 rounded-full flex items-center justify-center">
-                          <span className="text-red-600 text-xs font-bold">!</span>
+                        <div className="w-6 h-6 bg-red-100 dark:bg-red-900/40 rounded-full flex items-center justify-center">
+                          <span className="text-red-600 dark:text-red-400 text-xs font-bold">!</span>
                         </div>
-                        <p className="text-red-700 text-sm font-medium">
+                        <p className="text-red-700 dark:text-red-300 text-sm font-medium">
                           {error.includes('Password must be at least 8 characters long')
                             ? 'Password must be at least 8 characters long.'
                             : error}
@@ -421,11 +421,11 @@ const RegisterPage: React.FC = () => {
 
                 {/* Login Link */}
                 <div className="mt-4 text-center">
-                  <p className="text-slate-600 text-sm">
+                  <p className="text-slate-600 dark:text-slate-300 text-sm">
                     Already have an account?{' '}
                     <Link
                       to="/login"
-                      className="text-blue-600 hover:text-blue-700 font-semibold transition-colors hover:underline"
+                      className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold transition-colors hover:underline"
                     >
                       Sign in here
                     </Link>
@@ -433,12 +433,12 @@ const RegisterPage: React.FC = () => {
                 </div>
 
                 {/* Terms */}
-                <div className="mt-3 p-3 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-200">
+                <div className="mt-3 p-3 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl border border-blue-200 dark:border-blue-800">
                   <div className="flex items-center space-x-2 mb-1">
-                    <Sparkles className="w-4 h-4 text-blue-600" />
-                    <span className="text-xs font-semibold text-blue-800">Free Forever</span>
+                    <Sparkles className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                    <span className="text-xs font-semibold text-blue-800 dark:text-blue-200">Free Forever</span>
                   </div>
-                  <p className="text-xs text-blue-700">
+                  <p className="text-xs text-blue-700 dark:text-blue-300">
                     No credit card required • Full access to all features
                   </p>
                 </div>
@@ -447,29 +447,29 @@ const RegisterPage: React.FC = () => {
 
             {/* Subtle Branding */}
             <div className="text-center mt-2">
-              <p className="text-xs text-slate-400 font-medium">Sisyphus II · Task Management</p>
+              <p className="text-xs text-slate-400 dark:text-slate-500 font-medium">Sisyphus II · Task Management</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Beautiful Footer */}
-      <footer className="bg-white/60 backdrop-blur-xl border-t border-white/20 w-full">
+      <footer className="bg-white/60 dark:bg-gray-900/60 backdrop-blur-xl border-t border-white/20 dark:border-gray-800/20 w-full">
         <div className="max-w-6xl mx-auto px-4 py-2">
           <div className="flex flex-col sm:flex-row items-center justify-between space-y-1 sm:space-y-0">
             <div className="flex items-center space-x-3">
-              <div className="flex items-center space-x-1 text-slate-600">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+              <div className="flex items-center space-x-1 text-slate-600 dark:text-slate-300">
+                <div className="w-2 h-2 bg-green-500 dark:bg-green-400 rounded-full animate-pulse" />
                 <span className="text-xs font-medium">Live</span>
               </div>
-              <span className="text-slate-400">•</span>
-              <p className="text-xs text-slate-600">
+              <span className="text-slate-400 dark:text-slate-500">•</span>
+              <p className="text-xs text-slate-600 dark:text-slate-300">
                 Built with 🧡 for productivity
               </p>
             </div>
             
             <div className="flex items-center space-x-3">
-              <span className="text-xs text-slate-400">© 2025 Sisyphus II.</span>
+              <span className="text-xs text-slate-400 dark:text-slate-500">© 2025 Sisyphus II.</span>
             </div>
           </div>
         </div>
