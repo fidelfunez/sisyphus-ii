@@ -44,6 +44,7 @@ const DashboardPage: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [, setCategories] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [showTaskForm, setShowTaskForm] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [activeTab, setActiveTab] = useState<TabType>('tasks');
@@ -85,6 +86,13 @@ const DashboardPage: React.FC = () => {
 
   const handleThemeToggle = () => {
     setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
+  };
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    // Add a small delay to show the loading state
+    await new Promise(resolve => setTimeout(resolve, 300));
+    logout();
   };
 
   useEffect(() => {
@@ -375,7 +383,18 @@ const DashboardPage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-gray-950 dark:to-gray-900">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-gray-950 dark:to-gray-900 relative">
+      {/* Logout Overlay */}
+      {isLoggingOut && (
+        <div className="fixed inset-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm z-50 flex items-center justify-center transition-all duration-300">
+          <div className="text-center">
+            <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-slate-700 dark:text-slate-200 text-lg font-medium">Signing out...</p>
+            <p className="text-slate-500 dark:text-slate-400 text-sm mt-2">Thank you for using Sisyphus II</p>
+          </div>
+        </div>
+      )}
+      
       {/* Enhanced Header */}
       <header className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-b border-white/20 dark:border-gray-800 sticky top-0 z-50 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -408,10 +427,15 @@ const DashboardPage: React.FC = () => {
                 <p className="text-xs text-slate-500 dark:text-slate-300">Productivity Master</p>
               </div>
               <button
-                onClick={logout}
-                className="p-3 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-gray-800 rounded-xl transition-all duration-200 group"
+                onClick={handleLogout}
+                disabled={isLoggingOut}
+                className="p-3 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-gray-800 rounded-xl transition-all duration-200 group disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <LogOut size={20} className="group-hover:scale-110 transition-transform" />
+                {isLoggingOut ? (
+                  <div className="w-5 h-5 border-2 border-slate-400 border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <LogOut size={20} className="group-hover:scale-110 transition-transform" />
+                )}
               </button>
             </div>
           </div>
