@@ -29,12 +29,41 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, onCancel, task }) => {
   const [dueDate, setDueDate] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<{ title?: string }>({});
+  const [customCategories, setCustomCategories] = useState<string[]>([]);
+  const [newCategory, setNewCategory] = useState('');
 
   // Predefined categories for quick selection
   const predefinedCategories = [
     'Work', 'Personal', 'Health', 'Finance', 'Learning', 
     'Home', 'Shopping', 'Travel', 'Family', 'Hobbies'
   ];
+
+  // Load custom categories from localStorage on component mount
+  useEffect(() => {
+    const saved = localStorage.getItem('customCategories');
+    if (saved) {
+      setCustomCategories(JSON.parse(saved));
+    }
+  }, []);
+
+  // Save custom categories to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('customCategories', JSON.stringify(customCategories));
+  }, [customCategories]);
+
+  const addCustomCategory = () => {
+    if (newCategory.trim() && !predefinedCategories.includes(newCategory.trim()) && !customCategories.includes(newCategory.trim())) {
+      setCustomCategories([...customCategories, newCategory.trim()]);
+      setNewCategory('');
+    }
+  };
+
+  const removeCustomCategory = (catToRemove: string) => {
+    setCustomCategories(customCategories.filter(cat => cat !== catToRemove));
+    if (category === catToRemove) {
+      setCategory('');
+    }
+  };
 
   // Initialize form with task data if editing
   useEffect(() => {
@@ -81,9 +110,9 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, onCancel, task }) => {
   };
 
   const priorityOptions = [
-    { value: 1, label: 'Low', color: 'text-green-600', bg: 'bg-green-50', border: 'border-green-200' },
-    { value: 2, label: 'Medium', color: 'text-yellow-600', bg: 'bg-yellow-50', border: 'border-yellow-200' },
-    { value: 3, label: 'High', color: 'text-red-600', bg: 'bg-red-50', border: 'border-red-200' }
+    { value: 1, label: 'Low', color: 'text-white', bg: 'bg-green-500', border: 'border-green-500', unselectedColor: 'text-green-600', unselectedBg: 'bg-green-50', unselectedBorder: 'border-green-200' },
+    { value: 2, label: 'Medium', color: 'text-white', bg: 'bg-yellow-500', border: 'border-yellow-500', unselectedColor: 'text-yellow-600', unselectedBg: 'bg-yellow-50', unselectedBorder: 'border-yellow-200' },
+    { value: 3, label: 'High', color: 'text-white', bg: 'bg-red-500', border: 'border-red-500', unselectedColor: 'text-red-600', unselectedBg: 'bg-red-50', unselectedBorder: 'border-red-200' }
   ];
 
   const isEditing = !!task;
@@ -187,25 +216,82 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, onCancel, task }) => {
                     disabled={isSubmitting}
                   />
                 </div>
+
+                {/* Add Custom Category */}
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={newCategory}
+                    onChange={(e) => setNewCategory(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && addCustomCategory()}
+                    className="flex-1 px-3 py-2 text-sm border border-slate-200 dark:border-gray-500 bg-white/70 dark:bg-gray-700/70 rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400"
+                    placeholder="Add new category..."
+                    disabled={isSubmitting}
+                  />
+                  <button
+                    type="button"
+                    onClick={addCustomCategory}
+                    disabled={!newCategory.trim() || isSubmitting}
+                    className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-xl text-sm font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Add
+                  </button>
+                </div>
                 
                 {/* Predefined Categories */}
-                <div className="flex flex-wrap gap-2">
-                  {predefinedCategories.map((cat) => (
-                    <button
-                      key={cat}
-                      type="button"
-                      onClick={() => setCategory(cat)}
-                      className={`px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
-                        category === cat
-                          ? 'bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-200 border-2 border-blue-200 dark:border-blue-600'
-                          : 'bg-slate-100 dark:bg-gray-600 text-slate-600 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-gray-500'
-                      }`}
-                      disabled={isSubmitting}
-                    >
-                      {cat}
-                    </button>
-                  ))}
+                <div className="space-y-2">
+                  <p className="text-xs font-medium text-slate-600 dark:text-slate-400">Predefined Categories:</p>
+                  <div className="flex flex-wrap gap-2">
+                    {predefinedCategories.map((cat) => (
+                      <button
+                        key={cat}
+                        type="button"
+                        onClick={() => setCategory(cat)}
+                        className={`px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
+                          category === cat
+                            ? 'bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-200 border-2 border-blue-200 dark:border-blue-600'
+                            : 'bg-slate-100 dark:bg-gray-600 text-slate-600 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-gray-500'
+                        }`}
+                        disabled={isSubmitting}
+                      >
+                        {cat}
+                      </button>
+                    ))}
+                  </div>
                 </div>
+
+                {/* Custom Categories */}
+                {customCategories.length > 0 && (
+                  <div className="space-y-2">
+                    <p className="text-xs font-medium text-slate-600 dark:text-slate-400">Your Categories:</p>
+                    <div className="flex flex-wrap gap-2">
+                      {customCategories.map((cat) => (
+                        <div key={cat} className="flex items-center gap-1">
+                          <button
+                            type="button"
+                            onClick={() => setCategory(cat)}
+                            className={`px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
+                              category === cat
+                                ? 'bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-200 border-2 border-purple-200 dark:border-purple-600'
+                                : 'bg-purple-50 dark:bg-gray-600 text-purple-600 dark:text-purple-200 hover:bg-purple-100 dark:hover:bg-gray-500'
+                            }`}
+                            disabled={isSubmitting}
+                          >
+                            {cat}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => removeCustomCategory(cat)}
+                            disabled={isSubmitting}
+                            className="p-1 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all duration-200"
+                          >
+                            <X size={14} />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -341,13 +427,13 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, onCancel, task }) => {
                   className={`p-4 rounded-2xl border-2 transition-all duration-200 text-center group ${
                     priority === option.value
                       ? `${option.bg} ${option.border} ${option.color} shadow-lg scale-105`
-                      : 'bg-white/70 dark:bg-gray-600/70 border-slate-200 dark:border-gray-500 text-slate-600 dark:text-slate-200 hover:border-slate-300 dark:hover:border-gray-400 hover:bg-white/90 dark:hover:bg-gray-600/90'
+                      : `${option.unselectedBg} ${option.unselectedBorder} ${option.unselectedColor} hover:bg-white/90 dark:hover:bg-gray-600/90`
                   }`}
                   disabled={isSubmitting}
                 >
                   <div className="flex flex-col items-center space-y-2">
                     <div className={`w-3 h-3 rounded-full transition-all duration-200 ${
-                      priority === option.value ? option.color.replace('text-', 'bg-') : 'bg-slate-300 dark:bg-gray-500'
+                      priority === option.value ? 'bg-white' : option.unselectedColor.replace('text-', 'bg-')
                     }`}></div>
                     <span className="font-semibold">{option.label}</span>
                     <span className="text-xs opacity-75">
