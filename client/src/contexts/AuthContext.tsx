@@ -232,6 +232,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     removeStoredToken('refresh_token');
     setToken(null);
     setUser(null);
+    setError(null); // Clear any error messages when logging out
     delete axios.defaults.headers.common['Authorization'];
     console.log('AuthProvider: Logout completed');
   }, []);

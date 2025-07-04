@@ -41,6 +41,11 @@ const LoginPage: React.FC = () => {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
+  // Clear any error messages when the login page loads
+  useEffect(() => {
+    clearError();
+  }, [clearError]);
+
   const handleThemeToggle = () => {
     setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
   };
