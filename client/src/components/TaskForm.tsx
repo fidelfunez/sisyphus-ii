@@ -90,7 +90,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, onCancel, task }) => {
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-      <div className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/20 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+      <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-600/20 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         {/* Enhanced Header */}
         <div className="flex items-center justify-between p-6 border-b border-slate-200 dark:border-gray-700">
           <div className="flex items-center space-x-4">
@@ -137,7 +137,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, onCancel, task }) => {
                 className={`w-full px-4 py-4 text-lg border-2 rounded-2xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-500/20 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 ${
                   errors.title 
                     ? 'border-red-300 dark:border-red-500 bg-red-50 dark:bg-red-900/20 focus:border-red-500' 
-                    : 'border-slate-200 dark:border-gray-600 bg-white/70 dark:bg-gray-800/70 focus:border-blue-500 hover:border-slate-300 dark:hover:border-gray-500'
+                    : 'border-slate-200 dark:border-gray-500 bg-white/70 dark:bg-gray-700/70 focus:border-blue-500 hover:border-slate-300 dark:hover:border-gray-400 dark:focus:shadow-lg dark:focus:shadow-blue-500/10'
                 }`}
                 placeholder="What needs to be done?"
                 disabled={isSubmitting}
@@ -161,7 +161,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, onCancel, task }) => {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={4}
-              className="w-full px-4 py-4 text-lg border-2 border-slate-200 dark:border-gray-600 bg-white/70 dark:bg-gray-800/70 rounded-2xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 hover:border-slate-300 dark:hover:border-gray-500 resize-none text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400"
+              className="w-full px-4 py-4 text-lg border-2 border-slate-200 dark:border-gray-500 bg-white/70 dark:bg-gray-700/70 rounded-2xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 hover:border-slate-300 dark:hover:border-gray-400 resize-none text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 dark:focus:shadow-lg dark:focus:shadow-blue-500/10"
               placeholder="Add more details about this task..."
               disabled={isSubmitting}
             />
@@ -182,7 +182,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, onCancel, task }) => {
                     type="text"
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
-                    className="w-full pl-12 pr-4 py-4 text-lg border-2 border-slate-200 dark:border-gray-600 bg-white/70 dark:bg-gray-800/70 rounded-2xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 hover:border-slate-300 dark:hover:border-gray-500 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400"
+                    className="w-full pl-12 pr-4 py-4 text-lg border-2 border-slate-200 dark:border-gray-500 bg-white/70 dark:bg-gray-700/70 rounded-2xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 hover:border-slate-300 dark:hover:border-gray-400 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 dark:focus:shadow-lg dark:focus:shadow-blue-500/10"
                     placeholder="Enter category..."
                     disabled={isSubmitting}
                   />
@@ -197,8 +197,8 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, onCancel, task }) => {
                       onClick={() => setCategory(cat)}
                       className={`px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
                         category === cat
-                          ? 'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 border-2 border-blue-200 dark:border-blue-700'
-                          : 'bg-slate-100 dark:bg-gray-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-gray-600'
+                          ? 'bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-200 border-2 border-blue-200 dark:border-blue-600'
+                          : 'bg-slate-100 dark:bg-gray-600 text-slate-600 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-gray-500'
                       }`}
                       disabled={isSubmitting}
                     >
@@ -229,7 +229,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, onCancel, task }) => {
                       const day = String(today.getDate()).padStart(2, '0');
                       return `${year}-${month}-${day}`;
                     })()}
-                    className="w-full pl-12 pr-4 py-4 text-lg border-2 border-slate-200 dark:border-gray-600 bg-white/70 dark:bg-gray-800/70 rounded-2xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 hover:border-slate-300 dark:hover:border-gray-500 text-slate-900 dark:text-white"
+                    className="w-full pl-12 pr-4 py-4 text-lg border-2 border-slate-200 dark:border-gray-500 bg-white/70 dark:bg-gray-700/70 rounded-2xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 hover:border-slate-300 dark:hover:border-gray-400 text-slate-900 dark:text-white dark:focus:shadow-lg dark:focus:shadow-blue-500/10"
                     disabled={isSubmitting}
                   />
                 </div>
@@ -253,8 +253,8 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, onCancel, task }) => {
                         const day = String(today.getDate()).padStart(2, '0');
                         return `${year}-${month}-${day}`;
                       })()
-                        ? 'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 border-2 border-blue-200 dark:border-blue-700'
-                        : 'bg-slate-100 dark:bg-gray-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-gray-600'
+                        ? 'bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-200 border-2 border-blue-200 dark:border-blue-600'
+                        : 'bg-slate-100 dark:bg-gray-600 text-slate-600 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-gray-500'
                     }`}
                     disabled={isSubmitting}
                   >
@@ -279,8 +279,8 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, onCancel, task }) => {
                         const day = String(tomorrow.getDate()).padStart(2, '0');
                         return `${year}-${month}-${day}`;
                       })()
-                        ? 'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 border-2 border-blue-200 dark:border-blue-700'
-                        : 'bg-slate-100 dark:bg-gray-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-gray-600'
+                        ? 'bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-200 border-2 border-blue-200 dark:border-blue-600'
+                        : 'bg-slate-100 dark:bg-gray-600 text-slate-600 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-gray-500'
                     }`}
                     disabled={isSubmitting}
                   >
@@ -305,8 +305,8 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, onCancel, task }) => {
                         const day = nextWeek.getDate();
                         return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                       })()
-                        ? 'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 border-2 border-blue-200 dark:border-blue-700'
-                        : 'bg-slate-100 dark:bg-gray-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-gray-600'
+                        ? 'bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-200 border-2 border-blue-200 dark:border-blue-600'
+                        : 'bg-slate-100 dark:bg-gray-600 text-slate-600 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-gray-500'
                     }`}
                     disabled={isSubmitting}
                   >
@@ -341,7 +341,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, onCancel, task }) => {
                   className={`p-4 rounded-2xl border-2 transition-all duration-200 text-center group ${
                     priority === option.value
                       ? `${option.bg} ${option.border} ${option.color} shadow-lg scale-105`
-                      : 'bg-white/70 dark:bg-gray-800/70 border-slate-200 dark:border-gray-600 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-gray-500 hover:bg-white/90 dark:hover:bg-gray-800/90'
+                      : 'bg-white/70 dark:bg-gray-600/70 border-slate-200 dark:border-gray-500 text-slate-600 dark:text-slate-200 hover:border-slate-300 dark:hover:border-gray-400 hover:bg-white/90 dark:hover:bg-gray-600/90'
                   }`}
                   disabled={isSubmitting}
                 >
@@ -367,7 +367,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ onSubmit, onCancel, task }) => {
               type="button"
               onClick={onCancel}
               disabled={isSubmitting}
-              className="px-8 py-3 text-slate-600 dark:text-slate-300 bg-white/70 dark:bg-gray-800/70 border-2 border-slate-200 dark:border-gray-600 rounded-2xl font-medium hover:bg-white/90 dark:hover:bg-gray-800/90 hover:border-slate-300 dark:hover:border-gray-500 focus:outline-none focus:ring-4 focus:ring-slate-500/20 transition-all duration-200 disabled:opacity-50"
+              className="px-8 py-3 text-slate-600 dark:text-slate-200 bg-white/70 dark:bg-gray-600/70 border-2 border-slate-200 dark:border-gray-500 rounded-2xl font-medium hover:bg-white/90 dark:hover:bg-gray-600/90 hover:border-slate-300 dark:hover:border-gray-400 focus:outline-none focus:ring-4 focus:ring-slate-500/20 transition-all duration-200 disabled:opacity-50"
             >
               Cancel
             </button>
